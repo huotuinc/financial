@@ -9,22 +9,17 @@
 
 package com.huotu.financial.config;
 
-import me.jiangcai.lib.spring.logging.LoggingConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Created by jin on 2016/8/23.
  */
 @Configuration
-@ComponentScan({"com.huotu.financial.service"})
-@EnableTransactionManagement
-@Import(
-        {
-                LoggingConfig.class
-        }
-)
-public class CoreConfig {
+@EnableWebMvc
+@ComponentScan({"com.huotu.financial.mvc", "com.huotu.financial.controller"})
+@EnableScheduling
+public class MVCConfig {
 }
