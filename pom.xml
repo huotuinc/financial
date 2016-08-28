@@ -22,30 +22,40 @@
     <artifactId>financial</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>financial Maven Webapp</name>
-    <url>http://maven.apache.org</url>
+
 
     <properties>
-        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <luffy.version>2.1-SNAPSHOT</luffy.version>
-        <lib.version>1.8</lib.version>
+        <spring.version>4.2.2.RELEASE</spring.version>
+        <lib.version>1.11-SNAPSHOT</lib.version>
+        <java.version>1.8</java.version>
+        <maven.compiler.plugin.version>3.3</maven.compiler.plugin.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <pluginRepositories>
         <pluginRepository>
             <id>repo-jc</id>
             <name>JiangCai Repository</name>
-            <url>http://repo.jiangcai.me:8082/content/groups/public/</url>
+            <url>http://repo.jiangcai.me:8082/nexus/content/groups/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
     <repositories>
         <repository>
             <id>repo-jc</id>
             <name>JiangCai Repository</name>
-            <url>http://repo.jiangcai.me:8082/content/groups/public/</url>
+            <url>http://repo.jiangcai.me:8082/nexus/content/groups/public/</url>
         </repository>
         <repository>
             <id>repo-huotu</id>
@@ -55,68 +65,20 @@
     </repositories>
 
     <dependencies>
-        <!--Redis-->
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-            <version>1.6.0.RELEASE</version>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-            <version>2.4.2</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>2.7.3</version>
-            <scope>runtime</scope>
-        </dependency>
-        <!--Redis End-->
 
-        <!--VFS -->
+
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-vfs2</artifactId>
-            <version>2.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.luffy.lib</groupId>
+            <artifactId>libspring</artifactId>
+            <version>${lib.version}</version>
         </dependency>
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>3.1</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.51</version>
-            <scope>runtime</scope>
-        </dependency>
-        <!--VFS END -->
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.3.1</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.jiangcai.lib</groupId>
-            <artifactId>spring</artifactId>
-            <version>${luffy.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.31</version>
-            <scope>runtime</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.luffy.lib</groupId>
             <artifactId>libspringtest</artifactId>
@@ -124,19 +86,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils-core</artifactId>
-            <version>1.8.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.7</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.0-b01</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -144,43 +97,6 @@
             <artifactId>lombok</artifactId>
             <version>1.16.4</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.6.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.6.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.6.1</version>
-        </dependency>
-
-        <!--任务调度-->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz-jobs</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.huotu.huobanplus</groupId>
-            <artifactId>common-service</artifactId>
-            <version>1.5.2</version>
         </dependency>
     </dependencies>
     <build>
