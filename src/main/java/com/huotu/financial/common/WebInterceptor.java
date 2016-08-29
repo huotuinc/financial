@@ -23,7 +23,7 @@ import java.util.Map;
  * Created by Administrator on 2016/8/29.
  */
 public class WebInterceptor implements HandlerInterceptor {
-    Log log = LogFactory.getLog(WebInterceptor.class);
+    private Log log = LogFactory.getLog(WebInterceptor.class);
 
     @Autowired
     private UserService userService;

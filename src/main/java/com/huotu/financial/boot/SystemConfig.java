@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @Configuration
 @ImportResource("classpath:spring-jpa.xml")
-@EnableJpaRepositories(value = "com.huotu.financial.repository", repositoryFactoryBeanClass = ClassicsRepositoryFactoryBean.class)
+@EnableJpaRepositories(value = "com.huotu.financial.repository")
 @Import(value = {LoggingConfig.class})
 @ComponentScan(value = {"com.huotu.financial.service", "com.huotu.financial.controller"})
 public class SystemConfig {
