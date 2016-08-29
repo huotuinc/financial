@@ -37,12 +37,12 @@ public class BasicNameValuePair implements NameValuePair, Cloneable, Serializabl
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
-    public String getValue() {
-        return null;
+    public Object getValue() {
+        return value;
     }
 
     @Override

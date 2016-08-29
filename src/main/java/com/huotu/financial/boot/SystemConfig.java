@@ -11,8 +11,7 @@ package com.huotu.financial.boot;
 
 import com.huotu.huobanplus.base.ResourceConfig;
 import com.huotu.huobanplus.common.DataServiceSpringConfig;
-import com.huotu.huobanplus.common.entity.MallBaseConfig;
-import me.jiangcai.lib.spring.data.ClassicsRepositoryFactoryBean;
+import com.huotu.huobanplus.sdk.mall.MallSDKConfig;
 import me.jiangcai.lib.spring.logging.LoggingConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -29,7 +28,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Import(value = {
         LoggingConfig.class,
         DataServiceSpringConfig.class,
-        MallBaseConfig.class,
+        MallSDKConfig.class,
         ResourceConfig.class})
 @EnableScheduling
 public class SystemConfig {

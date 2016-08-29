@@ -32,7 +32,10 @@ public class RestUtil {
     public static Map<String, Object> toMap(NameValuePair[] nameValuePairs) {
         List<NameValuePair> list = new ArrayList<>(Arrays.asList(nameValuePairs));
         Map<String, Object> map = new HashMap<>();
-        list.stream().map(nameValuePair -> map.put(nameValuePair.getName(), nameValuePair.getValue()));
+        for (NameValuePair nameValuePair : list) {
+            System.out.println(nameValuePair.getName());
+            map.put(nameValuePair.getName(), nameValuePair.getValue());
+        }
         return map;
     }
 }

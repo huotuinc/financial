@@ -24,5 +24,20 @@ import org.springframework.stereotype.Repository;
 public interface FinancialGoodsRepository extends JpaRepository<FinancialGoods, Long>,
         JpaSpecificationExecutor<FinancialGoods> {
 
+    /**
+     * 根据商户id查询理财活动列表
+     *
+     * @param customerId 商户id
+     * @param pageable   分页
+     * @return 理财活动列表
+     */
     Page<FinancialGoods> findAllByCustomerId(@Param("customerId") Long customerId, Pageable pageable);
+
+    /**
+     * 根据商品id查询理财活动列表数量
+     *
+     * @param id 商品id
+     * @return 列表数量
+     */
+    Long countById(@Param("id") Long id);
 }

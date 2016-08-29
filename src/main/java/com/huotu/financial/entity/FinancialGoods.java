@@ -29,7 +29,6 @@ public class FinancialGoods {
      * 一一对应商城商品的Id
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
