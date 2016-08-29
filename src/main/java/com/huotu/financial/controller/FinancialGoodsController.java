@@ -11,6 +11,8 @@ package com.huotu.financial.controller;
 
 import com.huotu.financial.entity.FinancialGoods;
 import com.huotu.financial.repository.FinancialGoodsRepository;
+import com.huotu.financial.util.RestUtil;
+import com.huotu.financial.util.support.BasicNameValuePair;
 import com.huotu.huobanplus.sdk.mall.annotation.CustomerId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,9 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Administrator on 2016/8/29.
@@ -44,24 +44,47 @@ public class FinancialGoodsController {
      * 理财列表页
      *
      * @param customerId 商户id
-     * @return 理财列表页
+     * @return /financial/index.html
      * @throws IOException
      */
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public ModelAndView index(@CustomerId Long customerId, @RequestParam(required = false) Integer pageNo) throws IOException {
         if (Objects.isNull(pageNo))
             pageNo = 0;
-        ModelAndView modelAndView = new ModelAndView();
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
         Pageable pageable = new PageRequest(pageNo, pageSize, sort);
         Page<FinancialGoods> pages = financialGoodsRepository.findAllByCustomerId(customerId, pageable);
-        Map<String, Object> map = new ConcurrentHashMap<>();
-        map.put("customerId", customerId);
-        map.put("pages", pages);
-        modelAndView.addAllObjects(map);
-        modelAndView.setViewName("/financial/index");
-        return modelAndView;
+        return RestUtil.success("/financial/index",
+                new BasicNameValuePair("customerId", customerId),
+                new BasicNameValuePair("pages", pages));
     }
 
+    /**
+     * 新增活动页面
+     *
+     * @param customerId 商户id
+     * @return /financial/financialPage.html
+     * @throws IOException
+     */
+    @RequestMapping(value = "/addPage", method = RequestMethod.GET)
+    public ModelAndView addPage(@CustomerId Long customerId) throws IOException {
+        return RestUtil.success("/financial/financialPage",
+                new BasicNameValuePair("customerId", customerId),
+                new BasicNameValuePair("isEdit", false));
+    }
+
+    /**
+     * 编辑活动页面
+     *
+     * @param customerId 商户id
+     * @return /financial/financialPage.html
+     * @throws IOException
+     */
+    @RequestMapping(value = "/editPage", method = RequestMethod.GET)
+    public ModelAndView editPage(@CustomerId Long customerId) throws IOException {
+        return RestUtil.success("/financial/financialPage",
+                new BasicNameValuePair("customerId", customerId),
+                new BasicNameValuePair("isEdit", true));
+    }
 
 }
