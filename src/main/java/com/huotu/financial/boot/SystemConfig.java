@@ -18,17 +18,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Created by Administrator on 2016/8/28.
  */
 @Configuration
 @ImportResource("classpath:spring-jpa.xml")
-@EnableJpaRepositories(value = "com.huotu.financial.repository", repositoryFactoryBeanClass = ClassicsRepositoryFactoryBean.class)
+@EnableJpaRepositories(value = "com.huotu.financial.repository")
 @Import(value = {
         LoggingConfig.class,
         DataServiceSpringConfig.class,
         MallBaseConfig.class,
         ResourceConfig.class})
+@EnableScheduling
 public class SystemConfig {
 }

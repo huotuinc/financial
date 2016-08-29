@@ -23,6 +23,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Table(name = "Mall_FinancialGoods")
 public class FinancialGoods {
     /**
      * 一一对应商城商品的Id

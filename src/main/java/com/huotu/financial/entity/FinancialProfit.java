@@ -15,6 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Table(name = "Mall_FinancialProfit")
 public class FinancialProfit {
 
     @Id
@@ -43,6 +44,6 @@ public class FinancialProfit {
     /**
      * 时间
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date time;
 }

@@ -9,13 +9,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 理财购买流水
+ * 用户的理财商品
  * Created by Administrator on 2016/8/28.
  */
 
 @Getter
 @Setter
 @Entity
+@Table(name = "Mall_FinancialBuyFlow")
 public class FinancialBuyFlow {
 
     /**
@@ -89,4 +90,10 @@ public class FinancialBuyFlow {
      * 被抵用
      */
     private Boolean isUsed;
+
+    /**
+     * 一级上线用户
+     * 首次购买设置此值
+     */
+    private Long belongOne;
 }
