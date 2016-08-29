@@ -1,6 +1,5 @@
 package com.huotu.financial.repository;
 
-import com.huotu.financial.entity.UserFlow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

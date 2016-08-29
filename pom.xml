@@ -98,6 +98,29 @@
             <version>1.16.4</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.huotu.common</groupId>
+            <artifactId>huotulib</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.huotu.huobanplus</groupId>
+            <artifactId>common-service</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.0.0.RELEASE</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>ROOT</finalName>
