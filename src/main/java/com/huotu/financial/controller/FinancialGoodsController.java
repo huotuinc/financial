@@ -9,11 +9,17 @@
 
 package com.huotu.financial.controller;
 
+import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
+import com.huotu.financial.entity.FinancialProfit;
+import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.repository.FinancialGoodsRepository;
+import com.huotu.financial.repository.FinancialProfitRepository;
 import com.huotu.financial.service.CommonConfigsService;
 import com.huotu.financial.util.RestUtil;
 import com.huotu.financial.util.support.BasicNameValuePair;
+import com.huotu.huobanplus.common.entity.Goods;
+import com.huotu.huobanplus.common.repository.GoodsRepository;
 import com.huotu.huobanplus.sdk.mall.annotation.CustomerId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,6 +51,12 @@ public class FinancialGoodsController {
     private FinancialGoodsRepository financialGoodsRepository;
     @Autowired
     private CommonConfigsService commonConfigsService;
+    @Autowired
+    private GoodsRepository goodsRepository;
+    @Autowired
+    private FinancialBuyFlowRepository financialBuyFlowRepository;
+    @Autowired
+    private FinancialProfitRepository financialProfitRepository;
 
     /**
      * 理财列表页
@@ -126,7 +138,15 @@ public class FinancialGoodsController {
                 new BasicNameValuePair("url", getIndexURL()));
     }
 
+    /**
+     * 删除理财活动
+     *
+     * @param id 活动id
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
     public ModelAndView delete(@RequestParam Long id) throws IOException {
         financialGoodsRepository.delete(id);
         return RestUtil.success(null, new BasicNameValuePair("success", true),
@@ -152,8 +172,79 @@ public class FinancialGoodsController {
      * @throws IOException
      */
     @RequestMapping(value = "/checkGoodsUsed", method = RequestMethod.GET)
+    @ResponseBody
     public boolean checkGoodsUsed(@RequestParam Long id) throws IOException {
         Long count = financialGoodsRepository.countById(id);
-        return count.intValue() <= 0;
+        return count.intValue() == 0;
     }
+
+    /**
+     * 查询商品列表
+     *
+     * @param customerId 商户id
+     * @return 商品列表
+     * @throws IOException
+     */
+    @RequestMapping(value = "/getGoodsList", method = RequestMethod.GET)
+    @ResponseBody
+    public Page<Goods> getGoodsList(@CustomerId Long customerId) throws IOException {
+        Pageable pageable = new PageRequest(0, 20);
+        Page<Goods> pages = goodsRepository.findByOwner_IdAndScenesAndDisabledFalseAndMarketableTrue(customerId, 0, pageable);
+        return pages;
+    }
+
+
+    /**
+     * 用户理财产品详情页
+     *
+     * @param customerId 商户id
+     * @param id         商品id
+     * @return /financial/buyFlowIndex.html
+     * @throws IOException
+     */
+    public ModelAndView buyFlowIndex(@CustomerId Long customerId, @RequestParam Long id) throws IOException {
+        return RestUtil.success("/buyFlowIndex", new BasicNameValuePair("customerId", customerId),
+                new BasicNameValuePair("goodsId", id));
+    }
+
+    /**
+     * 用户理财列表
+     *
+     * @param page       页码
+     * @param pageSize   每页条数
+     * @param customerId 商户id
+     * @return 用户理财列表
+     * @throws IOException
+     */
+    @RequestMapping(value = "/getPageBuyFlow", method = RequestMethod.GET)
+    @ResponseBody
+    public Page<FinancialBuyFlow> getPageBuyFlow(@RequestParam int page, @RequestParam int pageSize,
+                                                 @CustomerId Long customerId) throws IOException {
+        Sort sort = new Sort(Sort.Direction.DESC, "buyTime");
+        Pageable pageable = new PageRequest(page, pageSize, sort);
+        Page<FinancialBuyFlow> pages = financialBuyFlowRepository.findAllByCustomerId(customerId, pageable);
+        return pages;
+    }
+
+    /**
+     * 根据用户和理财期号查询用户每日流水列表
+     *
+     * @param page     页码
+     * @param pageSize 每日条数
+     * @param userId   用户id
+     * @param no       期号
+     * @return 流水列表
+     * @throws IOException
+     */
+    @RequestMapping(value = "/getPageProfit", method = RequestMethod.GET)
+    @ResponseBody
+    public Page<FinancialProfit> getPageProfit(@RequestParam int page, @RequestParam int pageSize,
+                                               @RequestParam Long userId, @RequestParam String no) throws IOException {
+        Sort sort = new Sort(Sort.Direction.DESC, "time");
+        Pageable pageable = new PageRequest(page, pageSize, sort);
+        Page<FinancialProfit> pages = financialProfitRepository.findAllByUserIdAndNo(userId, no, pageable);
+        return pages;
+    }
+
+
 }
