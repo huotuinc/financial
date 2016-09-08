@@ -1,7 +1,19 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.financial.service.impl;
 
 import com.huotu.common.base.RSAHelper;
 import com.huotu.financial.common.CookieHelper;
+import com.huotu.financial.common.PublicParameterHolder;
+import com.huotu.financial.common.PublicParameterModel;
+import com.huotu.financial.exceptions.UserException;
 import com.huotu.financial.service.UserService;
 import com.huotu.huobanplus.common.repository.UserRepository;
 import org.apache.commons.logging.Log;
@@ -12,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * Created by Administrator on 2016/8/28.
@@ -58,5 +71,13 @@ public class UserServiceImpl implements UserService {
 //            CookieHelper.set(response, userKey, userId.toString(), request.getServerName(), 60 * 60 * 24 * 365);
         }
 
+    }
+
+    @Override
+    public Long getUserFromSession() throws UserException {
+        PublicParameterModel model = PublicParameterHolder.get();
+        if (Objects.isNull(model) || Objects.isNull(model.getUserId()))
+            throw new UserException("用户未登录");
+        return model.getUserId();
     }
 }

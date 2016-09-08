@@ -16,6 +16,8 @@ import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.repository.FinancialGoodsRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
 import com.huotu.financial.service.CommonConfigsService;
+import com.huotu.financial.service.FinancialGoodsService;
+import com.huotu.financial.service.UserService;
 import com.huotu.financial.util.RestUtil;
 import com.huotu.financial.util.support.BasicNameValuePair;
 import com.huotu.huobanplus.common.entity.Goods;
@@ -57,12 +59,16 @@ public class FinancialGoodsController {
     private FinancialBuyFlowRepository financialBuyFlowRepository;
     @Autowired
     private FinancialProfitRepository financialProfitRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private FinancialGoodsService financialGoodsService;
 
     /**
      * 理财列表页
      *
      * @param customerId 商户id
-     * @return /financial/index.html
+     * @return /manage/index.html
      * @throws IOException
      */
     @RequestMapping(value = "/index", method = RequestMethod.GET)
@@ -72,7 +78,7 @@ public class FinancialGoodsController {
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
         Pageable pageable = new PageRequest(pageNo, pageSize, sort);
         Page<FinancialGoods> pages = financialGoodsRepository.findAllByCustomerId(customerId, pageable);
-        return RestUtil.success("/financial/index",
+        return RestUtil.success("/manage/index",
                 new BasicNameValuePair("customerId", customerId),
                 new BasicNameValuePair("pages", pages));
     }
@@ -86,7 +92,7 @@ public class FinancialGoodsController {
      */
     @RequestMapping(value = "/addPage", method = RequestMethod.GET)
     public ModelAndView addPage(@CustomerId Long customerId) throws IOException {
-        return RestUtil.success("/financial/financialPage",
+        return RestUtil.success("/manage/financialPage",
                 new BasicNameValuePair("customerId", customerId),
                 new BasicNameValuePair("isEdit", false));
     }
@@ -95,12 +101,12 @@ public class FinancialGoodsController {
      * 编辑活动页面
      *
      * @param customerId 商户id
-     * @return /financial/financialPage.html
+     * @return /manage/financialPage.html
      * @throws IOException
      */
     @RequestMapping(value = "/editPage", method = RequestMethod.GET)
     public ModelAndView editPage(@CustomerId Long customerId) throws IOException {
-        return RestUtil.success("/financial/financialPage",
+        return RestUtil.success("/manage/financialPage",
                 new BasicNameValuePair("customerId", customerId),
                 new BasicNameValuePair("isEdit", true));
     }
@@ -199,11 +205,11 @@ public class FinancialGoodsController {
      *
      * @param customerId 商户id
      * @param id         商品id
-     * @return /financial/profit.html
+     * @return /manage/buyFlowIndex.html
      * @throws IOException
      */
     public ModelAndView buyFlowIndex(@CustomerId Long customerId, @RequestParam Long id) throws IOException {
-        return RestUtil.success("/buyFlowIndex", new BasicNameValuePair("customerId", customerId),
+        return RestUtil.success("/manage/buyFlowIndex", new BasicNameValuePair("customerId", customerId),
                 new BasicNameValuePair("goodsId", id));
     }
 
@@ -243,8 +249,21 @@ public class FinancialGoodsController {
         Sort sort = new Sort(Sort.Direction.DESC, "time");
         Pageable pageable = new PageRequest(page, pageSize, sort);
         Page<FinancialProfit> pages = financialProfitRepository.findAllByUserIdAndNo(userId, no, pageable);
+
         return pages;
     }
 
+    /**
+     * 同意理财赎回操作
+     *
+     * @param no
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/updateFlowStatus", method = RequestMethod.POST)
+    @ResponseBody
+    public ModelAndView updateFlowStatus(@RequestParam String no) throws IOException {
+        return financialGoodsService.updateFlowStatus(no);
 
+    }
 }
