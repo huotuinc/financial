@@ -1,0 +1,200 @@
+/****/
+body {
+    font-family: Helvetica, STHeiti STXihei, Microsoft JhengHei, Microsoft YaHei, Arial;
+}
+
+/*.weui_cell{ font-size:15px} */
+
+ 
+.ddbg {
+    background-color: #efeff4
+} 
+.ddfr.red{ color:#EF0003}
+.ddfr.gr{ color:#1CD000}
+.ddfr{float:right}
+ 
+.weui_panel_access .weui_panel_ft{ color:#999}
+.weui_panel_bd.xxg .weui_media_box{ padding:0px; }
+
+ 
+.weui_media_desc.bddx{width:75%; float:left; color:#111; font-size:14px}
+.bddxs{float:right; width:12%; font-size:14px; text-align:right; min-height:45px}
+ 
+ 
+.bddxs p {
+    display: block;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+.weui_media_box.weui_media_appmsg .weui_media_hd.jf{ line-height:57px}
+ 
+.weui_dialog_ft a{ font-size:14px; color:#111; padding:5px 0px}
+ 
+ 
+ 
+ .weui_panel_access .none.weui_panel_ft:after {
+    content: " ";
+    display: none;
+}
+.wzfbg{ background-color:#E74700; color:#fff; padding:10px;}
+
+ 
+.left_in_s_sdf{  height:100%; border-top:1px solid #e5e5e5 }
+.ljcy{
+	display:block;
+	background-color: #fff;	 
+	color: #111;
+	width:100%;
+	height:48px;
+	line-height:48px;
+ 
+	text-align:center;
+}
+.weui_cell.sq{font-size:16px}
+.weui_cell .sbq{float:right; margin-right:10px;}
+.weui_cell.sq .sbq{float:right; margin-right:10px;color:red;}
+.ddzdy{clear: both; padding-top:0px;padding-bottom:0px}
+.ddzdy.weui_media_box{ }
+.ddzdy.weui_media_box .weui_media_box{ padding-left:0px; padding-right:0px;}
+.shshg{float:right;margin-top: -37px; z-index:9}
+.shshg.none{ display:none}
+.weui_btn_primary.s{ background-color:#E00003}
+
+ 	.sbs.weui_cell:before,.sbs.weui_cell:after,.weui_cells_checkbox.scv.weui_cells:before,.weui_cells_checkbox.scv.weui_cells:after{ border:none;}
+ .on.weui_media_box.weui_media_text .weui_media_desc{color:#FC4600}
+ 
+
+.weui_navbar.s.vs .weui_navbar_item.weui_bar_item_on {
+    background-color:#fff; color:#E00003; font-weight:700;
+	
+}
+.weui_panel_bd.fa{background-color:#fafafa}
+ 
+ 
+.dtop.weui_cell:before{ border-top:none}
+ 
+.weui_cells_access .kesuhui.weui_cell_ft:after,.weui_cells_access .bukesuhui.weui_cell_ft:after,.weui_cells_access .jj.weui_cell_ft:after{ display:none}
+
+.kesuhui{ background-color:#E00003; color:#fff; font-size:12px; border-radius:4px; padding:2px 6px}
+.bukesuhui{ background-color:#E6E6E6; color:#fff; font-size:12px; border-radius:4px; padding:2px 6px}
+
+
+
+.sl-zdy {
+    background-color: #BB0000;
+    padding:16px 14px 4px 14px;
+    color: #fff;
+    line-height:23px;
+}.sl-float-ul {
+    width: 100%;
+    overflow: hidden;
+    zoom: 1;
+    display: -webkit-flex;
+    display: flex;
+}.sl-zdy li:last-child {
+    border-right: 0px;
+}
+.sl-zdy li {
+    height: 60px;
+    border-right: 1px solid #FF8C8D;
+}
+.sl-float-ul li {
+    float: left;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    flex: 1;
+    -ms-flex: 1;
+    -webkit-flex: 1;
+    box-flex: 1;
+    -ms-box-flex: 1;
+    -webkit-box-flex: 1;
+}.sl-zdy .bm {
+    font-size: 27px;
+}.sl-zdy .sm {
+    font-size: 14px;
+}.dailiren-s-ka.duu {
+ 
+}
+.dailiren-s-ka {
+    background-color: #980000;
+    color: #fff;
+}
+.dailiren-float-ul {
+    width: 100%;
+    overflow: hidden;
+    zoom: 1;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.dailiren-s-ka.duu li {
+    padding: 0px 0px;
+}
+
+.dailiren-float-ul a {
+    color: #111;
+    display: block;
+}
+.dailiren-s-ka li a {
+    font-size: 12px;
+    color: #fff;
+    line-height: 14px;
+    padding: 10px 0px 6px 0px; 
+}
+
+.dailiren-s-ka.duu li:last-child {
+    border: none;
+}
+.dailiren-s-ka.duu li {
+    padding: 0px 0px;
+}
+.dailiren-s-ka.duu li {
+    border-right: 1px solid #BB0000;
+}
+.dailiren-float-ul.ka li {
+    position: relative;
+}.dailiren-float-ul li {
+    float: left;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    flex: 1;
+    -ms-flex: 1;
+    -webkit-flex: 1;
+    box-flex: 1;
+    -ms-box-flex: 1;
+    -webkit-box-flex: 1;
+}
+.pjf_4ge  li {
+    width: 25%;
+}
+.pjf_5ge  li {
+    width: 20%;
+}
+.pjf_3ge  li {
+    width: 33.3%;
+}
+.pjf_2ge li {
+    width: 50%;
+}
+
+
+.dailiren-s-ka li .sj {
+    font-size:16px;
+    color: #fff;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    width: 99%; margin-top:4px
+}
+.weui_cell_ft.lv {
+    color: #00C009;
+}

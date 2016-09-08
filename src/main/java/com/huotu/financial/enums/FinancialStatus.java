@@ -5,13 +5,13 @@ package com.huotu.financial.enums;
  */
 public enum FinancialStatus {
     /**
-     * 进行中
+     * 持有中
      */
-    GOING,
+    RUNNING,
     /**
-     * 申请赎回
+     * 处理中
      */
-    APPLY,
+    DOING,
     /**
      * 已赎回
      */

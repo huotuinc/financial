@@ -6,12 +6,20 @@ import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
 import com.huotu.financial.exceptions.NoRedeemStatusException;
+import com.huotu.financial.model.ViewBuyListModel;
+import com.huotu.financial.model.ViewFinancialTotalModel;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
+import com.huotu.financial.repository.FinancialProfitRepository;
 import com.huotu.financial.service.FinancialBuyFlowService;
+import com.huotu.huobanplus.common.entity.Goods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +33,12 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
     @Autowired
     private FinancialBuyFlowRepository financialBuyFlowRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private FinancialProfitRepository financialProfitRepository;
+
     @Override
     public void handleRedeem(FinancialBuyFlow financialBuyFlow) throws NoFindRedeemAmountException, ParseException, NoRedeemStatusException, NoReachRedeemPeriodException {
 
@@ -36,7 +50,7 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
             findFlow.setIsUsed(true);
             financialBuyFlowRepository.save(findFlow);
 
-            financialBuyFlow.setStatus(FinancialStatus.APPLY);
+            financialBuyFlow.setStatus(FinancialStatus.DOING);
             financialBuyFlowRepository.save(financialBuyFlow);
         }
     }
@@ -49,7 +63,7 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
      * @throws
      */
     public Boolean canRedeem(FinancialBuyFlow financialBuyFlow) throws NoReachRedeemPeriodException, NoRedeemStatusException, ParseException {
-        if (financialBuyFlow.getStatus() != FinancialStatus.GOING) throw new NoRedeemStatusException("不是可回购状态");
+        if (financialBuyFlow.getStatus() != FinancialStatus.RUNNING) throw new NoRedeemStatusException("不是可回购状态");
 
         //没到回购日期
         Date date = new Date();
@@ -63,5 +77,70 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         List<FinancialBuyFlow> financialBuyFlows = financialBuyFlowRepository.findAllForRedeem(financialBuyFlow.getUserId(), financialBuyFlow.getBuyTime(), financialBuyFlow.getMoney());
         if (financialBuyFlows.size() > 0) return financialBuyFlows.get(0);
         return null;
+    }
+
+    public List<ViewBuyListModel> getBuyFlowList(Long userId, Integer status, Long lastTime) {
+        List<ViewBuyListModel> viewBuyListModels = new ArrayList<>();
+
+        StringBuilder hql = new StringBuilder();
+        hql.append("select flow,goods from FinancialBuyFlow flow left join Goods goods on goods.id=flow.goodId where flow.userId=:userId");
+        FinancialStatus status1 = FinancialStatus.RUNNING;
+        if (status != null) {
+            if (status == 1) status1 = FinancialStatus.DOING;
+            if (status == 2) status1 = FinancialStatus.REDEEMED;
+        }
+        hql.append(" and flow.status=:status");
+        if (lastTime != null && lastTime > 0) {
+            hql.append(" and flow.buyTime<:buyTime");
+        }
+        hql.append(" order by flow.buyTime desc");
+        Query query = entityManager.createQuery(hql.toString());
+        query.setParameter("userId", userId);
+        query.setParameter("status", status1);
+        if (lastTime != null && lastTime > 0) query.setParameter("buyTime", new Date(lastTime));
+        query.setMaxResults(10);
+        List list = query.getResultList();
+        for (Object object : list) {
+            Object[] objects = (Object[]) object;
+            FinancialBuyFlow financialBuyFlow = (FinancialBuyFlow) objects[0];
+            Goods goods = (Goods) objects[1];
+            ViewBuyListModel viewBuyListModel = new ViewBuyListModel();
+            viewBuyListModel.setTitle(financialBuyFlow.getFinancialTitle());
+            viewBuyListModel.setPrice(financialBuyFlow.getPrice());
+            viewBuyListModel.setAmount(financialBuyFlow.getAmount());
+            viewBuyListModel.setNo(financialBuyFlow.getNo());
+            viewBuyListModel.setImageUrl(goods.getImages().get(0).getSmallPic().getValue());
+            viewBuyListModel.setMoeny(financialBuyFlow.getMoney());
+            Boolean canReddm = false;
+            try {
+                canReddm = canRedeem(financialBuyFlow);
+            } catch (Exception ex) {
+            }
+            if (canReddm)
+                viewBuyListModel.setStatus(1);
+            else
+                viewBuyListModel.setStatus(0);
+            viewBuyListModel.setDate(financialBuyFlow.getBuyTime());
+            viewBuyListModels.add(viewBuyListModel);
+        }
+
+        return viewBuyListModels;
+    }
+
+
+    public ViewFinancialTotalModel total(Long userId) {
+        ViewFinancialTotalModel viewFinancialTotalModel = new ViewFinancialTotalModel();
+
+        BigDecimal money = financialBuyFlowRepository.countFinancialMoney(userId, FinancialStatus.REDEEMED);
+        viewFinancialTotalModel.setMoney(money == null ? new BigDecimal(0) : money);
+
+        BigDecimal yesterdayIncome = financialProfitRepository.countYestodayProfit(userId
+                , com.huotu.common.base.DateHelper.getYesterdayBegin()
+                , com.huotu.common.base.DateHelper.getThisDayBegin());
+        viewFinancialTotalModel.setYesterdayIncome(yesterdayIncome == null ? new BigDecimal(0) : yesterdayIncome);
+
+        BigDecimal totalIncome = financialProfitRepository.countTotalProfit(userId);
+        viewFinancialTotalModel.setTotalIncome(totalIncome == null ? new BigDecimal(0) : totalIncome);
+        return viewFinancialTotalModel;
     }
 }

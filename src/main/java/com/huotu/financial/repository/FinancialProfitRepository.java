@@ -13,8 +13,13 @@ import com.huotu.financial.entity.FinancialProfit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/8/29.
@@ -31,4 +36,12 @@ public interface FinancialProfitRepository extends JpaRepository<FinancialProfit
      * @return 每日流水列表
      */
     Page<FinancialProfit> findAllByUserIdAndNo(@Param("userId") Long userId, @Param("no") String no, Pageable pageable);
+
+    @Query("select sum(profit.money) from FinancialProfit profit where profit.userId=?1 and profit.time>=?2 and profit.time<?3")
+    BigDecimal countYestodayProfit(Long userId, Date start, Date end);
+
+    @Query("select sum(profit.money) from FinancialProfit profit where profit.userId=?1")
+    BigDecimal countTotalProfit(Long userId);
+
+
 }

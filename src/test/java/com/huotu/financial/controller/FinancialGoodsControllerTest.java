@@ -64,4 +64,11 @@ public class FinancialGoodsControllerTest extends WebTest {
     public void addPage() throws Exception {
 
     }
+
+    @Test
+    public void b() {
+        Long i = null;
+        if (i != null && i > 0) System.out.println("false");
+
+    }
 }

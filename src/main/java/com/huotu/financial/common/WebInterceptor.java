@@ -49,7 +49,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
         log.debug("enter interceptor");
 
-        if (!env.acceptsProfiles("develop")) {
+        if (!env.acceptsProfiles("development")) {
             String customerIdStr = request.getParameter("customerId");
             if (customerIdStr == null) {
                 customerIdStr = request.getParameter("customerid");

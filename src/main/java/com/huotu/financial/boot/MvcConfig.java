@@ -52,6 +52,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         super.addInterceptors(registry);
         registry.addInterceptor(webInterceptor)
                 .addPathPatterns("/user/**")
+                .addPathPatterns("/financial/**")
                 .excludePathPatterns("/user/auth");
 
     }

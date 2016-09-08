@@ -199,7 +199,7 @@ public class FinancialGoodsController {
      *
      * @param customerId 商户id
      * @param id         商品id
-     * @return /financial/buyFlowIndex.html
+     * @return /financial/profit.html
      * @throws IOException
      */
     public ModelAndView buyFlowIndex(@CustomerId Long customerId, @RequestParam Long id) throws IOException {

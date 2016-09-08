@@ -45,4 +45,15 @@ public interface FinancialBuyFlowRepository extends JpaRepository<FinancialBuyFl
      * @return 用户理财列表
      */
     Page<FinancialBuyFlow> findAllByCustomerId(@Param("customerId") Long customerId, Pageable pageable);
+
+
+    /**
+     * 获取理财金额
+     *
+     * @param userId
+     * @param status
+     * @return
+     */
+    @Query("select sum(flow.money) from FinancialBuyFlow flow where flow.userId=?1 and flow.status<>?2")
+    BigDecimal countFinancialMoney(Long userId, FinancialStatus status);
 }
