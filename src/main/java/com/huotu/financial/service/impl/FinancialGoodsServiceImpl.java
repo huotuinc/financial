@@ -45,7 +45,7 @@ public class FinancialGoodsServiceImpl implements FinancialGoodsService {
     @Override
     public synchronized ModelAndView updateFlowStatus(String no) throws IOException {
         FinancialBuyFlow flow = financialBuyFlowRepository.getOne(no);
-        if (!flow.getStatus().equals(FinancialStatus.APPLY))
+        if (!flow.getStatus().equals(FinancialStatus.DOING))
             return RestUtil.success(null, new BasicNameValuePair("msg", "赎回失败，请核对信息后再进行操作"),
                     new BasicNameValuePair("success", false));
         flow.setStatus(FinancialStatus.REDEEMED);
