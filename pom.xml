@@ -103,12 +103,12 @@
         <dependency>
             <groupId>com.huotu.huobanplus</groupId>
             <artifactId>base-service</artifactId>
-            <version>1.5.3</version>
+            <version>1.5.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.huotu.huobanplus</groupId>
             <artifactId>common-service</artifactId>
-            <version>1.5.2</version>
+            <version>1.5.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.huotu.huobanplus</groupId>
