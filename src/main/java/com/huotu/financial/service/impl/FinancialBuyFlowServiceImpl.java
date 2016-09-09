@@ -1,3 +1,12 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.financial.service.impl;
 
 import com.huotu.financial.common.DateHelper;
@@ -6,10 +15,14 @@ import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
 import com.huotu.financial.exceptions.NoRedeemStatusException;
+import com.huotu.financial.exceptions.UserException;
+import com.huotu.financial.model.BuyFlowModel;
+import com.huotu.financial.model.UserModel;
 import com.huotu.financial.model.ViewBuyListModel;
 import com.huotu.financial.model.ViewFinancialTotalModel;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
+import com.huotu.financial.service.CacheService;
 import com.huotu.financial.service.FinancialBuyFlowService;
 import com.huotu.huobanplus.common.entity.Goods;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -32,6 +46,9 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
 
     @Autowired
     private FinancialBuyFlowRepository financialBuyFlowRepository;
+
+    @Autowired
+    private CacheService cacheService;
 
     @Autowired
     private EntityManager entityManager;
@@ -53,6 +70,38 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
             financialBuyFlow.setStatus(FinancialStatus.DOING);
             financialBuyFlowRepository.save(financialBuyFlow);
         }
+    }
+
+    @Override
+    public BuyFlowModel changeDomainToModel(FinancialBuyFlow flow) throws IOException, UserException {
+        BuyFlowModel model = new BuyFlowModel();
+        model.setUserId(flow.getUserId());
+        UserModel userModel = cacheService.getOneByUserId(flow.getUserId());
+        model.setWxName(userModel.getWxName());
+        model.setWxImgURL(userModel.getWxImgURL());
+        model.setAmount(flow.getAmount());
+        model.setBelongOne(flow.getBelongOne());
+        model.setBuyTime(flow.getBuyTime());
+        model.setCustomerId(flow.getCustomerId());
+        model.setFinancialTitle(flow.getFinancialTitle());
+        model.setGoodId(flow.getGoodId());
+        model.setIsUsed(flow.getIsUsed());
+        model.setMoney(flow.getMoney());
+        model.setNo(flow.getNo());
+        model.setPrice(flow.getPrice());
+        model.setRate(flow.getRate());
+        model.setRedeemPeriod(flow.getRedeemPeriod());
+        model.setStatus(flow.getStatus().ordinal());
+        return model;
+    }
+
+    @Override
+    public List<BuyFlowModel> changeDomainToModelList(List<FinancialBuyFlow> flows) throws IOException, UserException {
+        List<BuyFlowModel> list = new ArrayList<>();
+        for (FinancialBuyFlow flow : flows) {
+            list.add(changeDomainToModel(flow));
+        }
+        return list;
     }
 
     /**

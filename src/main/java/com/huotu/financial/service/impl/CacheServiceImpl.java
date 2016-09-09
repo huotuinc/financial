@@ -36,6 +36,8 @@ public class CacheServiceImpl implements CacheService {
     @Autowired
     private UserRepository userRepository;
 
+    @Override
+    public UserModel getOneByUserId(Long userId) throws IOException, UserException {
     public UserModel getOneByUserId(Long userId) throws IOException, UserException {
         if (userMap.containsKey(userId))
             return userMap.get(userId);

@@ -17,9 +17,9 @@ import com.huotu.financial.repository.FinancialGoodsRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
 import com.huotu.financial.service.CommonConfigsService;
 import com.huotu.financial.service.FinancialGoodsService;
-import com.huotu.financial.service.UserService;
 import com.huotu.financial.util.RestUtil;
 import com.huotu.financial.util.support.BasicNameValuePair;
+import com.huotu.huobanplus.common.dataService.GoodsService;
 import com.huotu.huobanplus.common.entity.Goods;
 import com.huotu.huobanplus.common.repository.GoodsRepository;
 import com.huotu.huobanplus.sdk.mall.annotation.CustomerId;
@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +48,7 @@ import java.util.Objects;
 @RequestMapping(value = "/financialGoods")
 public class FinancialGoodsController {
 
-    private static final int pageSize = 20;
+//    private static final int pageSize = 20;
 
     @Autowired
     private FinancialGoodsRepository financialGoodsRepository;
@@ -56,11 +57,13 @@ public class FinancialGoodsController {
     @Autowired
     private GoodsRepository goodsRepository;
     @Autowired
+    private GoodsService goodsService;
+    @Autowired
     private FinancialBuyFlowRepository financialBuyFlowRepository;
     @Autowired
     private FinancialProfitRepository financialProfitRepository;
-    @Autowired
-    private UserService userService;
+    //    @Autowired
+//    private UserService userService;
     @Autowired
     private FinancialGoodsService financialGoodsService;
 
@@ -72,11 +75,14 @@ public class FinancialGoodsController {
      * @throws IOException
      */
     @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public ModelAndView index(@CustomerId Long customerId, @RequestParam(required = false) Integer pageNo) throws IOException {
-        if (Objects.isNull(pageNo))
-            pageNo = 0;
+    public ModelAndView index(@CustomerId Long customerId, @RequestParam(required = false) Integer page,
+                              @RequestParam(required = false) Integer pageSize) throws IOException {
+        if (Objects.isNull(page))
+            page = 1;
+        if (Objects.isNull(pageSize))
+            pageSize = 20;
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
-        Pageable pageable = new PageRequest(pageNo, pageSize, sort);
+        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
         Page<FinancialGoods> pages = financialGoodsRepository.findAllByCustomerId(customerId, pageable);
         return RestUtil.success("/manage/index",
                 new BasicNameValuePair("customerId", customerId),
@@ -191,12 +197,31 @@ public class FinancialGoodsController {
      * @return 商品列表
      * @throws IOException
      */
-    @RequestMapping(value = "/getGoodsList", method = RequestMethod.GET)
+//    @RequestMapping(value = "/getGoodsList", method = RequestMethod.GET)
+//    @ResponseBody
+//    public Page<Goods> getGoodsList(@CustomerId Long customerId) throws IOException {
+//        Pageable pageable = new PageRequest(0, 20);
+//        Page<Goods> pages = goodsRepository.findByOwner_IdAndScenesAndDisabledFalseAndMarketableTrue(customerId, 0, pageable);
+//        return pages;
+//    }
+    @SuppressWarnings("SpellCheckingInspection")
+    @RequestMapping(value = "/getGoodsList", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Page<Goods> getGoodsList(@CustomerId Long customerId) throws IOException {
-        Pageable pageable = new PageRequest(0, 20);
+    public ModelMap getGoodsList(@CustomerId Long customerId, @RequestParam(value = "page") int page,
+                                 @RequestParam(value = "pagesize") int pageSize) throws IOException {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
         Page<Goods> pages = goodsRepository.findByOwner_IdAndScenesAndDisabledFalseAndMarketableTrue(customerId, 0, pageable);
-        return pages;
+//        Page<Goods> pages = goodsService.
+        Long count = pages.getTotalElements();
+        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+        ModelMap map = new ModelMap();
+        map.addAttribute("Total", pages.getTotalElements());
+        map.addAttribute("PageSize", pageSize);
+        map.addAttribute("Rows", pages.getContent());
+        map.addAttribute("PageIndex", page);
+        map.addAttribute("PageCount", pageCount);
+        return map;
     }
 
 

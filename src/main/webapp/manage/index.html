@@ -7,4 +7,91 @@
   ~ 2013-2016. All rights reserved.
   -->
 
-index
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <title>理财活动列表</title>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <div class="panel-body">
+                <table class="table table-bordered table-hover table-center">
+                    <thead>
+                    <tr>
+                        <th colspan="8" style="color: #636e7b; font-size: 14px; padding-bottom: 0px; text-align: left;">
+                            <!--<label><img src="/images/remark_icons/b1.gif" width="20" height="20" /></label>-->
+                            理财活动列表
+
+                            <p style="float: right;">
+                                <button type="button" class="btn btn-success">
+                                    <a href="javascript:void(0)" th:href="@{/financialGoods/addPage}">新增活动</a></button>
+                            </p>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>商品信息</td>
+                        <td>日利率</td>
+                        <td>赎回周期</td>
+                        <td>操作</td>
+                    </tr>
+                    <!--<tr th:each="financial:${list}">-->
+                    <!--<td th:text="${financial.title}">商品1</td>-->
+                    <!--<td>0.0001</td>-->
+                    <!--<td>allan</td>-->
+                    <!--<td>已支付</td>-->
+                    <!--<td></td>-->
+                    <!--<td>-->
+                    <!--<span onclick="javascript:hot.newTab('order_detail.html','订单详情')" class="cursor-point"><i class="fa fa-pencil tooltips" data-placement="top" data-toggle="tooltip" data-original-title="操作订单"></i></span>-->
+                    <!--&nbsp;-->
+                    <!--<span class="cursor-point" onclick="financialListHandler.remark()"><i class="fa fa-edit tooltips" data-placement="top" data-toggle="tooltip" data-original-title="备注"></i></span>-->
+                    <!--&nbsp;-->
+                    <!--<span class="cursor-point"><i class="fa fa-truck tooltips" data-placement="top" data-toggle="tooltip" data-original-title="查看物流"></i></span>-->
+                    <!--&nbsp;<br />-->
+                    <!--<br />-->
+                    <!--<span style="margin-left: -8px;"><i class="fa fa-print tooltips" data-placement="top" data-toggle="tooltip" data-original-title="订单打印"></i></span>-->
+                    <!--&nbsp;-->
+                    <!--<button style="padding: 0px 5px;" title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="购买清单打印">购</button>-->
+                    <!--&nbsp;-->
+                    <!--<button style="padding: 0px 5px;" title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="配货清单打印">配</button>-->
+                    <!--</td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+
+                <p style="float: left; margin: 20px 0;">共1条记录，当前第2/3，每页20条记录</p>
+                <ul style="float: right;" class="pagination pagination-split">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+
+<script src="../js/plugins/hot/bootstrap.hot.extra-utils.js"></script>
+<script src="../js/plugins/hot/bootstrap.hot.extra-init.js"></script>
+<script type="text/javascript">
+    var pageIndex = 1;
+    var totalPage = 20;
+
+    $(function () {
+        //初始化分页
+        var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
+
+        pageinate.init(function (p) {
+            $.ajax(function () {
+
+            })
+        });
+    });
+</script>
+</body>
+</html>
