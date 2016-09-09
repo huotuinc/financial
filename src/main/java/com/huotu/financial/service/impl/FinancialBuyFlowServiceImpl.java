@@ -143,4 +143,11 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         viewFinancialTotalModel.setTotalIncome(totalIncome == null ? new BigDecimal(0) : totalIncome);
         return viewFinancialTotalModel;
     }
+
+    @Override
+    public BigDecimal profitTotal(Long userId) {
+        return financialProfitRepository.countTotalProfit(userId);
+    }
+
+
 }

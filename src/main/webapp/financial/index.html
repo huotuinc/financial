@@ -8,17 +8,143 @@
   -->
 
 <!doctype html>
-<html><head>
-    <meta name="viewport" content="width=device-width,minimum-scale=1,user-scalable=no,maximum-scale=1,initial-scale=1" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="description" content="" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="http://resali.huobanplus.com/cdn/jquery-weui/0.8.1/jquery-weui.min.css">
-    <link rel="stylesheet" type="text/css" href="http://resali.huobanplus.com/cdn/jquery-weui/0.8.1/weui.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/weui.min-xian-diy.css">
+<html>
+<head>
     <title>理财中心</title>
+    <meta name="viewport"
+          content="width=device-width,minimum-scale=1,user-scalable=no,maximum-scale=1,initial-scale=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css"
+          href="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/jquery-weui.min.css">
+    <link rel="stylesheet" type="text/css" href="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/weui.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/weui.min-xian-diy.css">
+    <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/jquery-weui.min.js"></script>
+    <!--<script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/swiper.min.js"></script>-->
+    <!--<script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/city-picker.min.js"></script>-->
+
+
+    <script type="text/javascript">
+        var requestData = {status: 0, lastTime: 0};
+
+        $(function () {
+            page.init();
+        });
+
+        var page = {};
+        page.total = function () {
+            $.get("/financial/financialTotal"
+                    , ""
+                    , function (data) {
+                        $("#money").text(data.money);
+                        $("#yesterdayIncome").text(data.yesterdayIncome);
+                        $("#totalIncome").text(data.totalIncome);
+                    });
+        }
+
+        page.list = function () {
+            $.get("/financial/financialList"
+                    , requestData
+                    , function (data) {
+                        var html = "";
+                        var template = $("#template").html();
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            template += template.replace("{no}", row.no);
+                            template += template.replace("{imageUrl}", row.imageUrl);
+                            template += template.replace("{title}", row.title);
+                            template += template.replace("{price}", row.price);
+                            template += template.replace("{amount}", row.amount);
+                            template += template.replace("{moeny}", row.moeny);
+                            template += template.replace("{date}", row.date);
+                            template += template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
+                            html += template;
+                            if (i == data.length - 1) requestData.lastTime = row.date;
+                        }
+                        $("#list").append(html);
+                        $("#loading").hide();
+                    });
+        }
+
+        page.tab = function () {
+            $("#tab a").click(function () {
+                $("#tab a").removeClass("weui_bar_item_on");
+                $(this).addClass("weui_bar_item_on");
+                var index = $(this).index($(this).parent());
+                requestData.status = index;
+                requestData.lastTime = 0;
+                $("#list").html("");
+                page.list();
+            });
+        }
+
+        page.loading = function () {
+            var loading = false;  //状态标记
+            $(document.body).infinite().on("infinite", function () {
+                $("#loading").show();
+                if (loading) return;
+                loading = true;
+                setTimeout(function () {
+                    page.list();
+                    loading = false;
+                }, 100);   //模拟延迟
+            });
+        }
+
+        page.init = function () {
+            page.loading();
+            page.total();
+            page.list();
+            page.tab();
+        }
+
+
+        //        function total() {
+        //            $.get("/financial/financialTotal"
+        //                    , ""
+        //                    , function (data) {
+        //                        $("#money").text(data.money);
+        //                        $("#yesterdayIncome").text(data.yesterdayIncome);
+        //                        $("#totalIncome").text(data.totalIncome);
+        //                    });
+        //        }
+        //
+        //        function list() {
+        //            $.get("/financial/financialList"
+        //                    , requestData
+        //                    , function (data) {
+        //                        var html = "";
+        //                        var template = $("#template").html();
+        //                        for (var i = 0; i < data.length; i++) {
+        //                            var row = data[i];
+        //                            html += template.replace("{no}", row.no);
+        //                            html += template.replace("{imageUrl}", row.imageUrl);
+        //                            html += template.replace("{title}", row.title);
+        //                            html += template.replace("{price}", row.price);
+        //                            html += template.replace("{amount}", row.amount);
+        //                            html += template.replace("{moeny}", row.moeny);
+        //                            html += template.replace("{date}", row.date);
+        //                            html += template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
+        //                        }
+        //                        $("#list").append(html);
+        //                    });
+        //        }
+        //
+        //        function tab() {
+        //            $("#tab a").click(function () {
+        //                $("#tab a").removeClass("weui_bar_item_on");
+        //                $(this).addClass("weui_bar_item_on");
+        //                var index = $(this).index($(this).parent());
+        //                requestData.status = index;
+        //                list();
+        //            });
+        //        }
+
+    </script>
 </head>
 <body>
 <div class="ddbg">
@@ -26,8 +152,7 @@
         <ul class="sl-float-ul  pjf_1ge ">
             <li>
                 <p class="sm">理财金额(元)</p>
-                <p class="bm">50000.00</p>
-
+                <p class="bm" id="money">0</p>
             </li>
 
         </ul>
@@ -35,23 +160,20 @@
     <div class="dailiren-s-ka duu">
         <ul class="dailiren-float-ul ka  pjf_2ge ">
             <li>
-                <a href="">
-
+                <a href="/financial/profit">
                     <p>昨日收益(元)</p>
-                    <p class="sj">0.34</p>
-                </a> </li>
+                    <p class="sj" id="yesterdayIncome">0</p>
+                </a></li>
             <li>
-                <a href="">
+                <a href="/financial/profit">
 
                     <p>累计收益(元)</p>
-                    <p class="sj">122.56</p>
-                </a> </li>
-
-
+                    <p class="sj" id="totalIncome">0</p>
+                </a></li>
         </ul>
     </div>
     <div class="weui_tab" style=" background-color:#efeff4">
-        <div class="weui_navbar s vs" style="z-index:12; position:relative">
+        <div class="weui_navbar s vs" style="z-index:12; position:relative" id="tab">
             <a class="weui_navbar_item weui_bar_item_on">
                 持有中
             </a>
@@ -64,227 +186,11 @@
         </div>
 
         <div class="weui_tab_bd" style="padding-top:10px">
-            <div id="tab1" class="weui_tab_bd_item weui_tab_bd_item_active">
-                <div class="ddbg">
-                    <div class="weui_panel weui_panel_access">
+            <div class="weui_tab_bd_item weui_tab_bd_item_active">
+                <div class="ddbg" id="list">
 
-                        <div class="weui_panel weui_panel_access">
-                            <div class="weui_cells weui_cells_access " style="margin-top:0px; font-size:14px;">
-                                <a class="weui_cell" href="javascript:;">
-                                    <div class="weui_cell_bd weui_cell_primary">
-                                        <p style="font-size:12px">编号12345678912345678912</p>
-                                    </div>
-                                    <div class="weui_cell_ft jj kesuhui">赎回</div>
-                                </a>
-                            </div>
-                            <div class="weui_panel_bd fa">
-                                <div class="ddzdy weui_media_box">
-                                    <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                                        <div class="weui_media_hd jf">
-                                            <img class="weui_media_appmsg_thumb" src="images/imgsss.png" alt="">
-                                        </div>
-                                        <div class="weui_media_bd">
-                                            <div>
-                                                <div class="weui_media_desc bddx">
-                                                    由各种物质组成由各种物质组成由各种物质组成。
-                                                </div>
-                                                <div class="bddxs">
-                                                    <p class="ddfr" style="font-size:12px"><b>￥131200</b></p>
-                                                    <!--小数点为零的不显示-->
-                                                    <p class="ddfr" style="font-size:12px; color:#999; margin-top:-5px;clear: both;">x1</p>
-                                                </div>
-                                                <p style="clear:both;"></p>
-                                            </div>
-                                            <p class="weui_media_desc" style="height:15px">&nbsp;</p>
-                                        </div>
-                                    </a>
-                                    <p class="shshg none">
-                                        <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_default">售后</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="weui_cell dtop" style="font-size: 14px;clear: both">
-                            <div class="weui_cell_bd weui_cell_primary">
-                                <p style="float:right">共3件&nbsp;合计￥<span style="color:red">10000</span></p>
-                                <p style="clear:both;">
-                                    <span style="float:right;font-size:12px; color:#ccc">2016-10-10 10:00:00</span>
-                                </p>
-                            </div>
-                        </div>
-                        <p style="clear:both"></p>
-                    </div>
-                    <div class="weui_panel weui_panel_access">
-
-                        <div class="weui_panel weui_panel_access">
-                            <div class="weui_cells weui_cells_access " style="margin-top:0px; font-size:14px;">
-                                <a class="weui_cell" href="javascript:;">
-                                    <div class="weui_cell_bd weui_cell_primary">
-                                        <p style="font-size:12px">编号12345678912345678912</p>
-                                    </div>
-                                    <div class="weui_cell_ft jj bukesuhui">赎回</div>
-                                </a>
-                            </div>
-                            <div class="weui_panel_bd fa">
-                                <div class="ddzdy weui_media_box">
-                                    <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                                        <div class="weui_media_hd jf">
-                                            <img class="weui_media_appmsg_thumb" src="images/imgsss.png" alt="">
-                                        </div>
-                                        <div class="weui_media_bd">
-                                            <div>
-                                                <div class="weui_media_desc bddx">
-                                                    由各种物质组成由各种物质组成由各种物质组成。
-                                                </div>
-                                                <div class="bddxs">
-                                                    <p class="ddfr" style="font-size:12px"><b>￥131200</b></p>
-                                                    <!--小数点为零的不显示-->
-                                                    <p class="ddfr" style="font-size:12px; color:#999; margin-top:-5px;clear: both;">x1</p>
-                                                </div>
-                                                <p style="clear:both;"></p>
-                                            </div>
-                                            <p class="weui_media_desc" style="height:15px">&nbsp;</p>
-                                        </div>
-                                    </a>
-                                    <p class="shshg none">
-                                        <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_default">售后</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="weui_cell dtop" style="font-size: 14px;clear: both">
-                            <div class="weui_cell_bd weui_cell_primary">
-                                <p style="float:right">共3件&nbsp;合计￥<span style="color:red">10000</span></p>
-                                <p style="clear:both;">
-                                    <span style="float:right;font-size:12px; color:#ccc">2016-10-10 10:00:00</span>
-                                </p>
-                            </div>
-                        </div>
-                        <p style="clear:both"></p>
-                    </div>
-                    <div class="weui_panel weui_panel_access">
-
-                        <div class="weui_panel weui_panel_access">
-                            <div class="weui_cells weui_cells_access " style="margin-top:0px; font-size:14px;">
-                                <a class="weui_cell" href="javascript:;">
-                                    <div class="weui_cell_bd weui_cell_primary">
-                                        <p style="font-size:12px">编号12345678912345678912</p>
-                                    </div>
-                                    <div class="weui_cell_ft jj bukesuhui">赎回</div>
-                                </a>
-                            </div>
-                            <div class="weui_panel_bd fa">
-                                <div class="ddzdy weui_media_box">
-                                    <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                                        <div class="weui_media_hd jf">
-                                            <img class="weui_media_appmsg_thumb" src="images/imgsss.png" alt="">
-                                        </div>
-                                        <div class="weui_media_bd">
-                                            <div>
-                                                <div class="weui_media_desc bddx">
-                                                    由各种物质组成由各种物质组成由各种物质组成。
-                                                </div>
-                                                <div class="bddxs">
-                                                    <p class="ddfr" style="font-size:12px"><b>￥131200</b></p>
-                                                    <!--小数点为零的不显示-->
-                                                    <p class="ddfr" style="font-size:12px; color:#999; margin-top:-5px;clear: both;">x1</p>
-                                                </div>
-                                                <p style="clear:both;"></p>
-                                            </div>
-                                            <p class="weui_media_desc" style="height:15px">&nbsp;</p>
-                                        </div>
-                                    </a>
-                                    <p class="shshg none">
-                                        <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_default">售后</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="weui_cell dtop" style="font-size: 14px;clear: both">
-                            <div class="weui_cell_bd weui_cell_primary">
-                                <p style="float:right">共3件&nbsp;合计￥<span style="color:red">10000</span></p>
-                                <p style="clear:both;">
-                                    <span style="float:right;font-size:12px; color:#ccc">2016-10-10 10:00:00</span>
-                                </p>
-                            </div>
-                        </div>
-                        <p style="clear:both"></p>
-                    </div>
-                    <div class="weui_panel weui_panel_access">
-
-                        <div class="weui_panel weui_panel_access">
-                            <div class="weui_cells weui_cells_access " style="margin-top:0px; font-size:14px;">
-                                <a class="weui_cell" href="javascript:;">
-                                    <div class="weui_cell_bd weui_cell_primary">
-                                        <p style="font-size:12px">编号12345678912345678912</p>
-                                    </div>
-                                    <div class="weui_cell_ft jj bukesuhui">赎回</div>
-                                </a>
-                            </div>
-                            <div class="weui_panel_bd fa">
-                                <div class="ddzdy weui_media_box">
-                                    <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                                        <div class="weui_media_hd jf">
-                                            <img class="weui_media_appmsg_thumb" src="images/imgsss.png" alt="">
-                                        </div>
-                                        <div class="weui_media_bd">
-                                            <div>
-                                                <div class="weui_media_desc bddx">
-                                                    由各种物质组成由各种物质组成由各种物质组成。
-                                                </div>
-                                                <div class="bddxs">
-                                                    <p class="ddfr" style="font-size:12px"><b>￥131200</b></p>
-                                                    <!--小数点为零的不显示-->
-                                                    <p class="ddfr" style="font-size:12px; color:#999; margin-top:-5px;clear: both;">x1</p>
-                                                </div>
-                                                <p style="clear:both;"></p>
-                                            </div>
-                                            <p class="weui_media_desc" style="height:15px">&nbsp;</p>
-                                        </div>
-                                    </a>
-                                    <p class="shshg none">
-                                        <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_default">售后</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="weui_cell dtop" style="font-size: 14px;clear: both">
-                            <div class="weui_cell_bd weui_cell_primary">
-                                <p style="float:right">共3件&nbsp;合计￥<span style="color:red">10000</span></p>
-                                <p style="clear:both;">
-                                    <span style="float:right;font-size:12px; color:#ccc">2016-10-10 10:00:00</span>
-                                </p>
-                            </div>
-                        </div>
-                        <p style="clear:both"></p>
-                    </div>
                 </div>
-                <div class="weui-infinite-scroll">
-                    <div class="infinite-preloader"></div><!-- 菊花 -->
-                    正在加载... <!-- 文案，可以自行修改 -->
-                </div>
-            </div>
-            <div id="tab2" class="weui_tab_bd_item">
-                内容
-                <div class="weui-infinite-scroll">
-                    <div class="infinite-preloader"></div><!-- 菊花 -->
-                    正在加载... <!-- 文案，可以自行修改 -->
-                </div>
-            </div>
-            <div id="tab3" class="weui_tab_bd_item">
-                内容
-                <div class="weui-infinite-scroll">
-                    <div class="infinite-preloader"></div><!-- 菊花 -->
-                    正在加载... <!-- 文案，可以自行修改 -->
-                </div>
-            </div>
-            <div id="tab4" class="weui_tab_bd_item">
-                内容
-                <div class="weui-infinite-scroll">
+                <div class="weui-infinite-scroll" id="loading">
                     <div class="infinite-preloader"></div><!-- 菊花 -->
                     正在加载... <!-- 文案，可以自行修改 -->
                 </div>
@@ -293,8 +199,61 @@
 
 
     </div>
+
+
+    <div style="display: none;" id="template">
+        <div class="weui_panel weui_panel_access">
+
+            <div class="weui_panel weui_panel_access">
+                <div class="weui_cells weui_cells_access " style="margin-top:0px; font-size:14px;">
+                    <a class="weui_cell" href="javascript:;">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p style="font-size:12px">编号{no}</p>
+                        </div>
+                        <div class="weui_cell_ft jj kesuhui{status}">赎回</div>
+                    </a>
+                </div>
+                <div class="weui_panel_bd fa">
+                    <div class="ddzdy weui_media_box">
+                        <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
+                            <div class="weui_media_hd jf">
+                                <img class="weui_media_appmsg_thumb" src="{imageUrl}" alt="">
+                            </div>
+                            <div class="weui_media_bd">
+                                <div>
+                                    <div class="weui_media_desc bddx">
+                                        {title}
+                                    </div>
+                                    <div class="bddxs">
+                                        <p class="ddfr" style="font-size:12px"><b>￥{price}</b></p>
+                                        <!--小数点为零的不显示-->
+                                        <p class="ddfr"
+                                           style="font-size:12px; color:#999; margin-top:-5px;clear: both;">
+                                            x{amount}</p>
+                                    </div>
+                                    <p style="clear:both;"></p>
+                                </div>
+                                <p class="weui_media_desc" style="height:15px">&nbsp;</p>
+                            </div>
+                        </a>
+                        <p class="shshg none">
+                            <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_default">售后</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="weui_cell dtop" style="font-size: 14px;clear: both">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p style="float:right">共{amount}件&nbsp;合计￥<span style="color:red">{moeny}</span></p>
+                    <p style="clear:both;">
+                        <span style="float:right;font-size:12px; color:#ccc">{date}</span>
+                    </p>
+                </div>
+            </div>
+            <p style="clear:both"></p>
+        </div>
+    </div>
 </div>
 </body>
 </html>
-<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
-<script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.1/jquery-weui.min.js"></script>

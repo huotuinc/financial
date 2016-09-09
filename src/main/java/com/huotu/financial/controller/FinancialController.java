@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -47,6 +48,7 @@ public class FinancialController {
      * @return
      */
     @RequestMapping(value = "/financialList", method = RequestMethod.GET)
+    @ResponseBody
     public List<ViewBuyListModel> financialList(@RequestParam(value = "status") Integer status
             , @RequestParam(value = "lastTime", required = false) Long lastTime) {
         Long userId = PublicParameterHolder.get().getUserId();
@@ -58,18 +60,23 @@ public class FinancialController {
      *
      * @return
      */
-    @RequestMapping(value = "financialTotal", method = RequestMethod.GET)
+    @RequestMapping(value = "/financialTotal", method = RequestMethod.GET)
     @ResponseBody
     public ViewFinancialTotalModel financialTotal() {
         Long userId = PublicParameterHolder.get().getUserId();
         return financialBuyFlowService.total(userId);
     }
 
+    @RequestMapping(value = "/profitTotal", method = RequestMethod.GET)
+    @ResponseBody
+    public BigDecimal profitTotal() {
+        Long userId = PublicParameterHolder.get().getUserId();
+        return financialBuyFlowService.profitTotal(userId);
+    }
 
     @RequestMapping(value = "/profitList", method = RequestMethod.GET)
     @ResponseBody
     public List<ViewProfitListModel> profitList(Long lastId) {
-
         Long userId = PublicParameterHolder.get().getUserId();
         return financialProfitService.profitList(userId, lastId);
     }

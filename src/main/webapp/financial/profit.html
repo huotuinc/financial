@@ -10,6 +10,7 @@
 <!doctype html>
 <html>
 <head>
+    <title>收益明细</title>
     <meta name="viewport"
           content="width=device-width,minimum-scale=1,user-scalable=no,maximum-scale=1,initial-scale=1"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -20,8 +21,61 @@
     <link rel="stylesheet" type="text/css"
           href="http://resali.huobanplus.com/cdn/jquery-weui/0.8.1/jquery-weui.min.css">
     <link rel="stylesheet" type="text/css" href="http://resali.huobanplus.com/cdn/jquery-weui/0.8.1/weui.min.css">
-    <link rel="stylesheet" type="text/css" href="css/weui.min-xian-diy.css">
-    <title>收益明细</title>
+    <link rel="stylesheet" type="text/css" href="../css/weui.min-xian-diy.css">
+    <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/jquery-weui.min.js"></script>
+    <script type="text/javascript">
+        var requestData = {lastId: 0};
+
+        $(function () {
+            page.init();
+        })
+
+        var page = {};
+        page.list = function () {
+            $.get("/financial/profitList", requestData, function (data) {
+                var html = "";
+                var template = $("#template").html();
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+                    template += template.replace("{no}", row.no);
+                    template += template.replace("{date}", row.date);
+                    template += template.replace("{moeny}", row.moeny);
+                    html += template;
+                    if (i == data.length - 1) requestData.lastId = row.id;
+                }
+                $("#list").append(html);
+                $("#loading").hide();
+            })
+        }
+
+        page.profitTotal = function () {
+            $.get("/financial/profitTotal", requestData, function (data) {
+                $("#total").html(data);
+            })
+
+        }
+
+        page.loading = function () {
+            var loading = false;  //状态标记
+            $(document.body).infinite().on("infinite", function () {
+                $("#loading").show();
+                if (loading) return;
+                loading = true;
+                setTimeout(function () {
+                    page.list();
+                    loading = false;
+                }, 1500);   //模拟延迟
+            });
+        }
+
+
+        page.init = function () {
+            page.list();
+        }
+
+
+    </script>
 </head>
 
 <body class="ddbg">
@@ -31,7 +85,7 @@
         <ul class="sl-float-ul  pjf_1ge ">
             <li>
                 <p class="sm">总收益(元)</p>
-                <p class="bm">1200.00</p>
+                <p class="bm" id="total">0</p>
 
             </li>
 
@@ -40,24 +94,26 @@
 
 
     <div class="weui_cells_title">收益明细</div>
-    <div class="weui_cells liushui">
-        <div class="weui_cell">
+    <div class="weui_cells liushui" id="list">
 
-            <div class="weui_cell_bd weui_cell_primary">
-                <p style="font-size:14px">12345678912345678912</p>
-                <p style="font-size:12px; color:#ccc">2016-10-10&nbsp;12:00</p>
-            </div>
-            <div class="weui_cell_ft lv">+219.00</div>
-        </div>
-        <div class="weui_cell">
-
-            <div class="weui_cell_bd weui_cell_primary">
-                <p style="font-size:14px">12345678912345678912</p>
-                <p style="font-size:12px; color:#ccc">2016-10-10&nbsp;12:00</p>
-            </div>
-            <div class="weui_cell_ft lv">+219.00</div>
-        </div>
     </div>
+
+    <div class="weui-infinite-scroll" id="loading">
+        <div class="infinite-preloader"></div><!-- 菊花 -->
+        正在加载... <!-- 文案，可以自行修改 -->
+    </div>
+</div>
+
+<div id="template" style="display: none">
+    <div class="weui_cell">
+
+        <div class="weui_cell_bd weui_cell_primary">
+            <p style="font-size:14px">{no}</p>
+            <p style="font-size:12px; color:#ccc">{date}</p>
+        </div>
+        <div class="weui_cell_ft lv">+{money}</div>
+    </div>
+
 </div>
 </body>
 </html>

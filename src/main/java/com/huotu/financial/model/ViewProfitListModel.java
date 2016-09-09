@@ -13,6 +13,7 @@ import java.util.Date;
 @Setter
 public class ViewProfitListModel {
 
+    private  Long id;
     private String no;
     private Date date;
     private BigDecimal money;

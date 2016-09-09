@@ -6,6 +6,7 @@ import com.huotu.financial.exceptions.NoRedeemStatusException;
 import com.huotu.financial.model.ViewBuyListModel;
 import com.huotu.financial.model.ViewFinancialTotalModel;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 
@@ -47,4 +48,11 @@ public interface FinancialBuyFlowService {
      * @return
      */
     ViewFinancialTotalModel total(Long userId);
+
+    /**
+     * 获取总收益
+     * @param userId
+     * @return
+     */
+    BigDecimal profitTotal(Long userId);
 }
