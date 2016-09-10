@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 图表控件-->
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet">
+    <!--checkbox-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css"
+          rel="stylesheet">
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min.css" rel="stylesheet">
+
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+    <!--search-->
+    <form role="form" class="search-panel">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content p-md">
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="no">理财编号：</label>
+                                <input type="text" class="form-control input-sm mb10" id="no" name="no" placeholder="理财编号" style="width: 156px;"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="userName">用户名：</label>
+                                <input type="text" class="form-control input-sm mb10" id="userName" name="userName" placeholder="用户名"/>
+                            </div>
+
+                        </div>
+                        <p style="height: 8px;"></p>
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="financialTitle">理财商品：</label>
+                                <input type="text" class="form-control input-sm mb10" id="financialTitle" name="financialTitle" placeholder="理财商品" style="width: 500px"/>
+                            </div>
+                        </div>
+                        <p style="height: 8px;"></p>
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="time">购买时间：</label>
+                                <input type="text" class="form-control input-sm mb10 data-range-pick"
+                                       id="time" name="time" start-element="#beginTime"
+                                       end-element="#endTime" placeholder="开始时间-结束时间" style="width: 277px;"/>
+                                <input type="hidden" id="beginTime" name="beginTime"/>
+                                <input type="hidden" id="endTime" name="endTime"/>
+                            </div>
+
+                        </div>
+                        <div class="form-inline" style="max-width: 926px; text-align: right;">
+                            <button type="button" onclick="page.search()" class="btn btn-success">搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--search-->
+
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="tab-content">
+                    <div class="tab-pane active">
+                        <div class="panel-body">
+                            <table class="table table-bordered table-hover table-center">
+                                <thead>
+                                <tr>
+                                    <td>理财编号</td>
+                                    <td>用户名</td>
+                                    <td>理财商品</td>
+                                    <td>时间</td>
+                                    <td>操作</td>
+                                </tr>
+                                </thead>
+                                <tbody id="list">
+                                <tr>
+                                    <td>100.00</td>
+                                    <td>allan</td>
+                                    <td>已支付</td>
+                                    <td></td>
+                                    <td>
+                                        <button style="padding: 0px 5px;" title="" data-placement="top"
+                                                data-toggle="tooltip" class="btn btn-default tooltips" type="button"
+                                                data-original-title="确定赎回">确定赎回
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+
+                            <p style="float: left; margin: 20px 0;">共<i id="recordCount"></i>条记录，当前第<i id="pageIndex"></i>/<i id="pageCount"></i>，每页<i id="pageSize"></i>条记录</p>
+                            <ul style="float: right;" class="pagination pagination-split">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/hot/bootstrap.hot.extra-utils-1.0.1.js"></script>
+<script type="text/javascript">
+    var requestData = {no: "", userName: "", financialTitle: "", beginTime: "", endTime: "", pageNo: 1, pageSize: 10};
+
+    $(function () {
+        page.init();
+    })
+
+    var page = {};
+
+    page.init = function () {
+        page.list();
+    }
+
+    page.search = function () {
+        requestData.no = $("#no").val();
+        requestData.userName = $("#userName").val();
+        requestData.financialTitle = $("#financialTitle").val();
+        requestData.beginTime = $("#beginTime").val();
+        requestData.endTime = $("#endTime").val();
+        page.list();
+    }
+
+    page.list = function () {
+        $.get("/financialGoods/redeemlist.do", requestData, function (data) {
+            if (data) {
+                var html = "";
+                for (var i = 0; i < data.list.length; i++) {
+                    var row = data.list[i];
+                    html += '<tr><td>' + row.no + '</td><td>' + row.userName + '</td><td>' + row.financialTitle + '</td><td>' + row.time + '</td>' +
+                            '<td><button style="padding: 0px 5px;" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="确定赎回">确定赎回</button></td></tr>';
+                }
+
+                $("#list").html(html);
+
+                $("#recordCount").text(data.page.recordCount);
+                $("#pageIndex").text(data.page.pageNo);
+                $("#pageCount").text(data.page.totalPage);
+                $("#pageSize").text(data.page.pageSize);
+                page.paging(data.page.totalPage);
+            }
+        });
+    }
+
+    page.paging = function (totalPage) {
+        var pageinate = new hot.paging(".pagination", requestData.pageNo, totalPage, 9);
+        pageinate.init(function (pageNo) {
+            requestData.pageNo = pageNo;
+            page.list();
+        });
+    }
+
+</script>
+</body>
+</html>

@@ -12,6 +12,9 @@ package com.huotu.financial.controller;
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
 import com.huotu.financial.entity.FinancialProfit;
+import com.huotu.financial.model.PagingModel;
+import com.huotu.financial.model.ViewRedeemListModel;
+import com.huotu.financial.model.ViewRedeemListPageModel;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.repository.FinancialGoodsRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
@@ -39,6 +42,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -290,5 +296,32 @@ public class FinancialGoodsController {
     public ModelAndView updateFlowStatus(@RequestParam String no) throws IOException {
         return financialGoodsService.updateFlowStatus(no);
 
+    }
+
+    @RequestMapping(value = "/redeemList", method = RequestMethod.GET)
+    public String redeemList() {
+        return "manage/redeemlist";
+    }
+
+    @RequestMapping(value = "/redeemlist.do")
+    @ResponseBody
+    public ViewRedeemListPageModel redeemListDo() {
+        ViewRedeemListPageModel viewRedeemListPageModel = new ViewRedeemListPageModel();
+        PagingModel pagingModel = new PagingModel();
+        pagingModel.setPageNo(1);
+        pagingModel.setPageSize(5);
+        pagingModel.setRecordCount(60);
+        pagingModel.setTotalPage(6);
+        viewRedeemListPageModel.setPage(pagingModel);
+
+        List<ViewRedeemListModel> list = new ArrayList<>();
+        list.add(new ViewRedeemListModel("001", "lgh", "20%利润", new Date()));
+        list.add(new ViewRedeemListModel("002", "lgh", "20%利润", new Date()));
+        list.add(new ViewRedeemListModel("003", "lgh", "20%利润", new Date()));
+        list.add(new ViewRedeemListModel("004", "lgh", "20%利润", new Date()));
+        list.add(new ViewRedeemListModel("005", "lgh", "20%利润", new Date()));
+
+        viewRedeemListPageModel.setList(list);
+        return viewRedeemListPageModel;
     }
 }
