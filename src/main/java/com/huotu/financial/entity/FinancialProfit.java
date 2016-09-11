@@ -38,7 +38,7 @@ public class FinancialProfit {
      */
     private Long customerId;
 
-
+    @Column(precision = 20, scale = 2)
     private BigDecimal money;
 
     /**

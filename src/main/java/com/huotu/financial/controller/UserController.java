@@ -1,7 +1,13 @@
 package com.huotu.financial.controller;
 
 import com.huotu.common.base.HttpHelper;
+import com.huotu.financial.entity.FinancialBuyFlow;
+import com.huotu.financial.exceptions.NoFindRedeemAmountException;
+import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
+import com.huotu.financial.exceptions.NoRedeemStatusException;
+import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.service.CommonConfigsService;
+import com.huotu.financial.service.FinancialBuyFlowService;
 import com.huotu.financial.service.SecurityService;
 import com.huotu.financial.service.UserService;
 import com.jayway.jsonpath.JsonPath;
@@ -10,10 +16,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +44,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FinancialBuyFlowService financialBuyFlowService;
+
+    @Autowired
+    private FinancialBuyFlowRepository financialBuyFlowRepository;
 
     @RequestMapping("/auth")
     public String auth(String token, String sign, Integer code, String redirectUrl, HttpServletRequest request, HttpServletResponse response)
@@ -76,5 +92,15 @@ public class UserController {
 
         log.info("auth error " + code);
         return "redirect:/html/error";
+    }
+
+    @RequestMapping(value = "/redeem", method = RequestMethod.POST)
+    @ResponseBody
+    public String redeem(@RequestParam(value = "no") String no) throws NoRedeemStatusException, NoFindRedeemAmountException, ParseException, NoReachRedeemPeriodException {
+        FinancialBuyFlow financialBuyFlow = financialBuyFlowRepository.findOne(no);
+        if (financialBuyFlow != null) {
+            financialBuyFlowService.handleRedeem(financialBuyFlow);
+        }
+        return "success";
     }
 }

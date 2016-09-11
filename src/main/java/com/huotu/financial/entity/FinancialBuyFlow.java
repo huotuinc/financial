@@ -45,6 +45,7 @@ public class FinancialBuyFlow {
     /**
      * 单价
      */
+    @Column(precision = 20, scale = 2)
     private BigDecimal price;
 
     /**
@@ -55,6 +56,7 @@ public class FinancialBuyFlow {
     /**
      * 消费金额
      */
+    @Column(precision = 20, scale = 2)
     private BigDecimal money;
 
     /**
@@ -96,4 +98,10 @@ public class FinancialBuyFlow {
      * 首次购买设置此值
      */
     private Long belongOne;
+
+    /**
+     * 对应的外部订单号
+     */
+    @Column(length = 100)
+    private String toOuterOrderNo;
 }

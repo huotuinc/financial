@@ -30,6 +30,7 @@
 
     <script type="text/javascript">
         var requestData = {status: 0, lastTime: 0};
+        var requestRedeemData = {no: ""};
 
         $(function () {
             page.init();
@@ -62,6 +63,7 @@
                             template += template.replace("{moeny}", row.moeny);
                             template += template.replace("{date}", row.date);
                             template += template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
+                            template += template.replace("{status_value}", row.status);
                             html += template;
                             if (i == data.length - 1) requestData.lastTime = row.date;
                         }
@@ -93,6 +95,16 @@
                     loading = false;
                 }, 100);   //模拟延迟
             });
+        }
+
+        page.redeem = function (status, no) {
+            if (status == 1) {
+                requestRedeemData.no = no;
+                $.post("/user/redeem", requestRedeemData, function (data) {
+                    if (data == "success") window.location.href = window.location.href;
+                    else alert("申请失败");
+                });
+            }
         }
 
         page.init = function () {
@@ -210,7 +222,7 @@
                         <div class="weui_cell_bd weui_cell_primary">
                             <p style="font-size:12px">编号{no}</p>
                         </div>
-                        <div class="weui_cell_ft jj kesuhui{status}">赎回</div>
+                        <div class="weui_cell_ft jj {status}" onclick="page.redeem({status_value},'{no}')">赎回</div>
                     </a>
                 </div>
                 <div class="weui_panel_bd fa">

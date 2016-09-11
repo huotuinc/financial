@@ -10,16 +10,21 @@
 package com.huotu.financial.service;
 
 import com.huotu.financial.entity.FinancialBuyFlow;
+import com.huotu.financial.entity.FinancialGoods;
+import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
 import com.huotu.financial.exceptions.NoRedeemStatusException;
 import com.huotu.financial.exceptions.UserException;
 import com.huotu.financial.model.BuyFlowModel;
 import com.huotu.financial.model.ViewBuyListModel;
 import com.huotu.financial.model.ViewFinancialTotalModel;
+import com.huotu.huobanplus.common.entity.OrderItems;
+import com.huotu.huobanplus.common.entity.User;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,7 +37,7 @@ public interface FinancialBuyFlowService {
      *
      * @param financialBuyFlow
      */
-    void handleRedeem(FinancialBuyFlow financialBuyFlow) throws Exception;
+    void handleRedeem(FinancialBuyFlow financialBuyFlow) throws NoFindRedeemAmountException, ParseException, NoRedeemStatusException, NoReachRedeemPeriodException;
 
     /**
      * 可以赎回
@@ -47,6 +52,7 @@ public interface FinancialBuyFlowService {
 
     /**
      * 获得购买流水
+     *
      * @param userId
      * @param status
      * @param lastTime
@@ -56,6 +62,7 @@ public interface FinancialBuyFlowService {
 
     /**
      * 获得累计数据
+     *
      * @param userId
      * @return
      */
@@ -67,8 +74,37 @@ public interface FinancialBuyFlowService {
 
     /**
      * 获取总收益
+     *
      * @param userId
      * @return
      */
     BigDecimal profitTotal(Long userId);
+
+    /**
+     * 创建创建理财编号
+     *
+     * @param date   当前时间
+     * @param userId 用户Id
+     * @return
+     */
+    String createFinancialNo(Date date, Long userId);
+
+    /**
+     * 处理付款通知
+     * @param userId
+     * @param orderId
+     */
+    void handlePayNotice(Long userId, String orderId);
+
+    /**
+     * 保存流水
+     * @param financialGoods
+     * @param orderItems
+     * @param user
+     * @param orderId
+     */
+    void save(FinancialGoods financialGoods, OrderItems orderItems, User user, String orderId);
+
+
+
 }

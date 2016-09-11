@@ -46,6 +46,7 @@ public class FinancialGoods {
      * 日利率
      * 如千分之8.2 则日利率值为8.2
      */
+    @Column(precision = 20, scale = 2)
     private BigDecimal rate;
 
     /**

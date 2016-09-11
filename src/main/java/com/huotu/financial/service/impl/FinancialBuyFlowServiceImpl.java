@@ -11,6 +11,7 @@ package com.huotu.financial.service.impl;
 
 import com.huotu.financial.common.DateHelper;
 import com.huotu.financial.entity.FinancialBuyFlow;
+import com.huotu.financial.entity.FinancialGoods;
 import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
@@ -21,10 +22,16 @@ import com.huotu.financial.model.UserModel;
 import com.huotu.financial.model.ViewBuyListModel;
 import com.huotu.financial.model.ViewFinancialTotalModel;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
+import com.huotu.financial.repository.FinancialGoodsRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
 import com.huotu.financial.service.CacheService;
 import com.huotu.financial.service.FinancialBuyFlowService;
 import com.huotu.huobanplus.common.entity.Goods;
+import com.huotu.huobanplus.common.entity.OrderItems;
+import com.huotu.huobanplus.common.entity.User;
+import com.huotu.huobanplus.common.repository.OrderItemsRepository;
+import com.huotu.huobanplus.common.repository.OrderRepository;
+import com.huotu.huobanplus.common.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +40,7 @@ import javax.persistence.Query;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,6 +63,17 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
 
     @Autowired
     private FinancialProfitRepository financialProfitRepository;
+
+
+    @Autowired
+    private OrderItemsRepository orderItemsRepository;
+
+    @Autowired
+    private FinancialGoodsRepository financialGoodsRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Override
     public void handleRedeem(FinancialBuyFlow financialBuyFlow) throws NoFindRedeemAmountException, ParseException, NoRedeemStatusException, NoReachRedeemPeriodException {
@@ -199,4 +218,43 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
     }
 
 
+    public String createFinancialNo(Date date, Long userId) {
+        //订单号
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        return simpleDateFormat.format(date) + userId.toString();
+    }
+
+
+    public void handlePayNotice(Long userId, String orderId) {
+        User user = userRepository.findOne(userId);
+        List<OrderItems> orderItemses = orderItemsRepository.findAllByOrder_Id(orderId);
+        for (OrderItems orderItems : orderItemses) {
+            FinancialGoods financialGoods = financialGoodsRepository.findOne(Long.parseLong(orderItems.getGoodsId().toString()));
+            if (financialGoods != null) {
+                save(financialGoods, orderItems, user, orderId);
+            }
+        }
+    }
+
+    public void save(FinancialGoods financialGoods, OrderItems orderItems, User user, String orderId) {
+        Date date = new Date();
+        String no = createFinancialNo(date, user.getId());
+        FinancialBuyFlow financialBuyFlow = new FinancialBuyFlow();
+        financialBuyFlow.setUserId(user.getId());
+        financialBuyFlow.setGoodId(financialGoods.getId());
+        financialBuyFlow.setPrice(new BigDecimal(orderItems.getPrice()));
+        financialBuyFlow.setAmount(orderItems.getAmount());
+        financialBuyFlow.setMoney(new BigDecimal(orderItems.getAmount()).multiply(new BigDecimal(orderItems.getPrice())));
+        financialBuyFlow.setBelongOne(user.getBelongOne());
+        financialBuyFlow.setBuyTime(date);
+        financialBuyFlow.setCustomerId(user.getMerchant().getId());
+        financialBuyFlow.setFinancialTitle(financialGoods.getTitle());
+        financialBuyFlow.setIsUsed(false);
+        financialBuyFlow.setNo(no);
+        financialBuyFlow.setRate(financialGoods.getRate());
+        financialBuyFlow.setRedeemPeriod(financialGoods.getRedeemPeriod());
+        financialBuyFlow.setStatus(FinancialStatus.DOING);
+        financialBuyFlow.setToOuterOrderNo(orderId);
+        financialBuyFlowRepository.save(financialBuyFlow);
+    }
 }
