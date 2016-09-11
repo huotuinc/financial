@@ -123,12 +123,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.huotu.huobanplus</groupId>
-            <artifactId>common-service</artifactId>
-            <version>1.5.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <version>2.1.0</version>

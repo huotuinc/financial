@@ -7,10 +7,10 @@
  * 2013-2016. All rights reserved.
  */
 
-var goodsListModule = $("#goodsListModule").modal("挑选商品", function () {
-    //确定按钮触发的事件
-    goodsListModule.hide();
-}, {width: '500px', height: '500px'});
+//var goodsListModule = $("#goodsListModule").modal("挑选商品", function () {
+//    //确定按钮触发的事件
+//    goodsListModule.hide();
+//}, {width: '500px', height: '500px'});
 var goodsWin;
 
 $(function () {
@@ -26,17 +26,17 @@ $(function () {
         showNumber: true,
         url: '../financialGoods/getGoodsList',//数据来源Url|通过mobel自定义属性配置
         rows: [
-            {width: '25%', field: 'title', title: '标题', align: 'left'},
+            {width: '40%', field: 'title', title: '标题', align: 'left'},
             {
-                width: '20%', field: 'price', title: '销售价', align: 'left'
+                width: '10%', field: 'price', title: '销售价', align: 'left'
             },
             {
-                width: '20%', field: 'stock', title: '库存', align: 'left'
+                width: '10%', field: 'stock', title: '库存', align: 'left'
             },
             {
-                width: '20%', field: 'caozuo', title: '操作', align: 'left', formatter: function (value, rowData) {
+                width: '10%', field: 'caozuo', title: '操作', align: 'left', formatter: function (value, rowData) {
                 return '<a href="javascript:void(0)" goodsName="' + rowData.title + '" goodsId="' + rowData.id + '" ' +
-                    'onclick="choiceGoods(this)">选择</a>';
+                    'onclick="goodsHandler.choiceGoods(this)">选择</a>';
             }
             }
         ]
@@ -88,14 +88,46 @@ $(function () {
     //        //{ "data": "Sex" }
     //    ]
     //}).api();
+
+
+    $("#saveActivity").click(function () {
+
+        if ($("#title").val() == "") {
+            layer.msg("请选择某件商品~");
+            return;
+        }
+        $("#saveActivity").attr("disabled", "disabled");
+        $.ajax({
+            url: '../financialGoods/save',
+            type: "POST",
+            data: {
+                customerId: $("#customerId").val(), id: $("#goodsId").val(), title: $("#title").val(),
+                rate: $("#rate").val(), redeemPeriod: $("#redeemPeriod").val()
+            },
+            success: function (result) {
+                if (result.success) {
+                    layer.msg('保存成功');
+                    $('#saveActivity').removeAttr("disabled");
+                    window.location.href = result.url;
+                }
+            }, error: function () {
+                layer.msg('服务器繁忙，请稍后再试');
+                $('#saveActivity').removeAttr("disabled");
+            }
+        })
+    })
 });
 
-function showGoodsList() {
-    goodsHandler.openGoodsWin();
-}
+//function showGoodsList() {
+//    goodsHandler.openGoodsWin();
+//}
 
 var goodsHandler = {
     openGoodsWin: function () {
+        //var url = 'getGoodsList';
+        //hot.iframeModal(url, '880px', '600px', {
+        //    title: "挑选商品"
+        //});
         var title = "挑选商品";
         goodsWin = layer.open({
             type: 1,
@@ -108,6 +140,42 @@ var goodsHandler = {
         });
     },
     choiceGoods: function (obj) {
-
+        var loading = layer.load(1, {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        var goodsId = $(obj).attr("goodsId");
+        var goodsName = $(obj).attr("goodsName");
+        layer.close(goodsWin);
+        $.ajax({
+            url: '../financialGoods/checkGoodsUsed',
+            type: "GET",
+            data: {id: goodsId},
+            success: function (result) {
+                layer.close(loading);
+                if (result) {
+                    $("#goodsId").val(goodsId);
+                    $("#title").val(goodsName);
+                } else {
+                    layer.msg('您在其他活动中已使用过该商品');
+                }
+            }, error: function () {
+                layer.close(loading);
+                layer.msg('服务器繁忙，请稍后再试');
+            }
+        })
     }
+    //deleteGoods:function(obj){
+    //    var goodsId = $(obj).attr("goodsId");
+    //    $.ajax({
+    //        url:'../financialGoods/delete',
+    //        type:'POST',
+    //        success:function(result){
+    //            if(result.success){
+    //                window.location.href = result.url;
+    //            }
+    //        },error:function(){
+    //            layer.msg("服务器繁忙，请稍后再试");
+    //        }
+    //    })
+    //}
 };

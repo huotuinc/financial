@@ -33,7 +33,6 @@ public class RestUtil {
         List<NameValuePair> list = new ArrayList<>(Arrays.asList(nameValuePairs));
         Map<String, Object> map = new HashMap<>();
         for (NameValuePair nameValuePair : list) {
-            System.out.println(nameValuePair.getName());
             map.put(nameValuePair.getName(), nameValuePair.getValue());
         }
         return map;

@@ -12,6 +12,7 @@ package com.huotu.financial.controller;
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
 import com.huotu.financial.entity.FinancialProfit;
+import com.huotu.financial.model.GoodsModel;
 import com.huotu.financial.model.PagingModel;
 import com.huotu.financial.model.ViewRedeemListModel;
 import com.huotu.financial.model.ViewRedeemListPageModel;
@@ -54,7 +55,8 @@ import java.util.Objects;
 @RequestMapping(value = "/financialGoods")
 public class FinancialGoodsController {
 
-//    private static final int pageSize = 20;
+    private static final int list_pageSize = 20;
+    private static final int list_page = 1;
 
     @Autowired
     private FinancialGoodsRepository financialGoodsRepository;
@@ -90,9 +92,16 @@ public class FinancialGoodsController {
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
         Page<FinancialGoods> pages = financialGoodsRepository.findAllByCustomerId(customerId, pageable);
+        Long count = pages.getTotalElements();
+        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
         return RestUtil.success("/manage/index",
                 new BasicNameValuePair("customerId", customerId),
-                new BasicNameValuePair("pages", pages));
+                new BasicNameValuePair("total", pages.getTotalElements()),
+                new BasicNameValuePair("pageSize", pageSize),
+                new BasicNameValuePair("page", page),
+                new BasicNameValuePair("pageCount", pageCount),
+                new BasicNameValuePair("url", getIndexURL() + "?page="),
+                new BasicNameValuePair("list", pages.getContent()));
     }
 
     /**
@@ -117,9 +126,11 @@ public class FinancialGoodsController {
      * @throws IOException
      */
     @RequestMapping(value = "/editPage", method = RequestMethod.GET)
-    public ModelAndView editPage(@CustomerId Long customerId) throws IOException {
+    public ModelAndView editPage(@CustomerId Long customerId, @RequestParam Long id) throws IOException {
+        FinancialGoods goods = financialGoodsRepository.findOne(id);
         return RestUtil.success("/manage/financialPage",
                 new BasicNameValuePair("customerId", customerId),
+                new BasicNameValuePair("financial", goods),
                 new BasicNameValuePair("isEdit", true));
     }
 
@@ -137,39 +148,40 @@ public class FinancialGoodsController {
     @Transactional
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
-    public ModelAndView save(
-            @RequestParam(required = false) Long id, @RequestParam Long customerId, @RequestParam String title,
+    public ModelMap save(
+            @RequestParam Long id, @RequestParam Long customerId, @RequestParam String title,
             @RequestParam BigDecimal rate, @RequestParam int redeemPeriod
     ) throws IOException {
-        FinancialGoods financialGoods;
-        if (Objects.nonNull(id))
-            financialGoods = financialGoodsRepository.getOne(id);
-        else
+        FinancialGoods financialGoods = financialGoodsRepository.findOne(id);
+        if (Objects.isNull(financialGoods))
             financialGoods = new FinancialGoods();
+        financialGoods.setId(id);
         financialGoods.setCustomerId(customerId);
         financialGoods.setTitle(title);
         financialGoods.setRate(rate);
         financialGoods.setRedeemPeriod(redeemPeriod);
         financialGoodsRepository.save(financialGoods);
-        return RestUtil.success(null, new BasicNameValuePair("success", true),
-                new BasicNameValuePair("financialGoods", financialGoods),
-                new BasicNameValuePair("url", getIndexURL()));
+        ModelMap map = new ModelMap();
+        map.addAttribute("success", true);
+        map.addAttribute("url", getIndexURL());
+        return map;
     }
 
-    /**
-     * 删除理财活动
-     *
-     * @param id 活动id
-     * @return
-     * @throws IOException
-     */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ResponseBody
-    public ModelAndView delete(@RequestParam Long id) throws IOException {
-        financialGoodsRepository.delete(id);
-        return RestUtil.success(null, new BasicNameValuePair("success", true),
-                new BasicNameValuePair("url", getIndexURL()));
-    }
+//    /**
+//     * 删除理财活动
+//     *
+//     * @param id 活动id
+//     * @return
+//     * @throws IOException
+//     */
+//    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+//    @ResponseBody
+//    public ModelMap delete(@RequestParam Long id) throws IOException {
+//        financialGoodsRepository.delete(id);
+//        ModelMap map = new ModelMap();
+//        return RestUtil.success(null, new BasicNameValuePair("success", true),
+//                new BasicNameValuePair("url", getIndexURL()));
+//    }
 
     /**
      * 得到列表URL
@@ -177,16 +189,15 @@ public class FinancialGoodsController {
      * @return
      */
     private String getIndexURL() {
-        String url = this.getClass().getAnnotation(RequestMapping.class).value()[0];
         String webURL = commonConfigsService.getWebUrl();
-        return webURL + url;
+        return webURL + "/financialGoods/index";
     }
 
     /**
      * 检查该商品是否被之前的活动使用过
      *
      * @param id 商户id
-     * @return
+     * @return true:未被使用过，false：已使用
      * @throws IOException
      */
     @RequestMapping(value = "/checkGoodsUsed", method = RequestMethod.GET)
@@ -203,31 +214,79 @@ public class FinancialGoodsController {
      * @return 商品列表
      * @throws IOException
      */
-//    @RequestMapping(value = "/getGoodsList", method = RequestMethod.GET)
-//    @ResponseBody
-//    public Page<Goods> getGoodsList(@CustomerId Long customerId) throws IOException {
-//        Pageable pageable = new PageRequest(0, 20);
-//        Page<Goods> pages = goodsRepository.findByOwner_IdAndScenesAndDisabledFalseAndMarketableTrue(customerId, 0, pageable);
-//        return pages;
+//    @SuppressWarnings("SpellCheckingInspection")
+//    @RequestMapping(value = "/getGoodsList", method = {RequestMethod.GET, RequestMethod.POST})
+//    public ModelAndView getGoodsList(@CustomerId Long customerId, @RequestParam(value = "page", required = false) Integer page,
+//                                     @RequestParam(value = "pageSize", required = false) Integer pageSize) throws IOException {
+//        Sort sort = new Sort(Sort.Direction.DESC, "id");
+//        if (Objects.isNull(page)) page = list_page;
+//        if (Objects.isNull(pageSize)) pageSize = list_pageSize;
+//        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
+//        Page<Goods> pages = goodsRepository.findByOwner_Id(customerId, pageable);
+//        List<GoodsModel> list = changeDomainToModelList(pages.getContent());
+////        Page<Goods> pages = goodsService.
+//        Long count = pages.getTotalElements();
+//        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+//        return RestUtil.success("/manage/goodsList", new BasicNameValuePair("total", pages.getTotalElements()),
+//                new BasicNameValuePair("pageSize", pageSize),
+//                new BasicNameValuePair("list", list),
+//                new BasicNameValuePair("page", page),
+//                new BasicNameValuePair("pageCount", pageCount));
 //    }
     @SuppressWarnings("SpellCheckingInspection")
     @RequestMapping(value = "/getGoodsList", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public ModelMap getGoodsList(@CustomerId Long customerId, @RequestParam(value = "page") int page,
-                                 @RequestParam(value = "pagesize") int pageSize) throws IOException {
+    public ModelMap getGoodsList(@CustomerId Long customerId, @RequestParam(value = "page", required = false) Integer page,
+                                 @RequestParam(value = "pagesize", required = false) Integer pageSize) throws IOException {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
+        if (Objects.isNull(page)) page = list_page;
+        if (Objects.isNull(pageSize)) pageSize = list_pageSize;
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
-        Page<Goods> pages = goodsRepository.findByOwner_IdAndScenesAndDisabledFalseAndMarketableTrue(customerId, 0, pageable);
-//        Page<Goods> pages = goodsService.
+//        Page<Goods> pages = goodsRepository.findByOwner_Id(customerId, pageable);
+        Page<Goods> pages = goodsService.findNormalEnabledByTitleAndCategory(customerId, 0, null, null, false, pageable);
+        List<GoodsModel> list = changeDomainToModelList(pages.getContent());
+
         Long count = pages.getTotalElements();
         int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
         ModelMap map = new ModelMap();
         map.addAttribute("Total", pages.getTotalElements());
         map.addAttribute("PageSize", pageSize);
-        map.addAttribute("Rows", pages.getContent());
+        map.addAttribute("Rows", list);
         map.addAttribute("PageIndex", page);
         map.addAttribute("PageCount", pageCount);
         return map;
+    }
+
+//    @RequestMapping(value = "/getGoodsListAjax", method = RequestMethod.GET)
+//    @ResponseBody
+//    public ModelMap getGoodsListAjax(@CustomerId Long customerId,@RequestParam int page,
+//                                 @RequestParam int pageSize) throws IOException {
+//        Sort sort = new Sort(Sort.Direction.DESC, "id");
+//        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
+//        Page<Goods> pages = goodsRepository.findByOwner_Id(customerId, pageable);
+//        List<GoodsModel> list = changeDomainToModelList(pages.getContent());
+//        Long count = pages.getTotalElements();
+//        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+//        ModelMap map = new ModelMap();
+//        map.addAttribute("total", pages.getTotalElements());
+//        map.addAttribute("pageSize", pageSize);
+//        map.addAttribute("list", list);
+//        map.addAttribute("page", page);
+//        map.addAttribute("pageCount", pageCount);
+//        return map;
+//    }
+
+    private List<GoodsModel> changeDomainToModelList(List<Goods> domains) {
+        List<GoodsModel> list = new ArrayList<>();
+        for (Goods goods : domains) {
+            GoodsModel model = new GoodsModel();
+            model.setId(goods.getId());
+            model.setPrice(goods.getPrice());
+            model.setStock(goods.getStock());
+            model.setTitle(goods.getTitle());
+            list.add(model);
+        }
+        return list;
     }
 
 
@@ -239,9 +298,21 @@ public class FinancialGoodsController {
      * @return /manage/buyFlowIndex.html
      * @throws IOException
      */
-    public ModelAndView buyFlowIndex(@CustomerId Long customerId, @RequestParam Long id) throws IOException {
+    public ModelAndView buyFlowIndex(@CustomerId Long customerId, @RequestParam Long id,
+                                     @RequestParam(required = false) Integer page,
+                                     @RequestParam(required = false) Integer pageSize) throws IOException {
+        Sort sort = new Sort(Sort.Direction.DESC, "buyTime");
+        Pageable pageable = new PageRequest(page, pageSize, sort);
+        Page<FinancialBuyFlow> pages = financialBuyFlowRepository.findAllByCustomerId(customerId, pageable);
+        Long count = pages.getTotalElements();
+        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
         return RestUtil.success("/manage/buyFlowIndex", new BasicNameValuePair("customerId", customerId),
-                new BasicNameValuePair("goodsId", id));
+                new BasicNameValuePair("total", pages.getTotalElements()),
+                new BasicNameValuePair("pageSize", pageSize),
+                new BasicNameValuePair("page", page),
+                new BasicNameValuePair("pageCount", pageCount),
+                new BasicNameValuePair("url", getIndexURL() + "?page="),
+                new BasicNameValuePair("list", pages.getContent()));
     }
 
     /**
