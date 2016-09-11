@@ -12,20 +12,18 @@ package com.huotu.financial.controller;
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
 import com.huotu.financial.entity.FinancialProfit;
-import com.huotu.financial.model.GoodsModel;
-import com.huotu.financial.model.PagingModel;
-import com.huotu.financial.model.ViewRedeemListModel;
-import com.huotu.financial.model.ViewRedeemListPageModel;
+import com.huotu.financial.exceptions.UserException;
+import com.huotu.financial.model.*;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.repository.FinancialGoodsRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
 import com.huotu.financial.service.CommonConfigsService;
+import com.huotu.financial.service.FinancialBuyFlowService;
 import com.huotu.financial.service.FinancialGoodsService;
 import com.huotu.financial.util.RestUtil;
 import com.huotu.financial.util.support.BasicNameValuePair;
 import com.huotu.huobanplus.common.dataService.GoodsService;
 import com.huotu.huobanplus.common.entity.Goods;
-import com.huotu.huobanplus.common.repository.GoodsRepository;
 import com.huotu.huobanplus.sdk.mall.annotation.CustomerId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -57,13 +55,16 @@ public class FinancialGoodsController {
 
     private static final int list_pageSize = 20;
     private static final int list_page = 1;
+    private static final String sign_and = "&&";
 
     @Autowired
     private FinancialGoodsRepository financialGoodsRepository;
     @Autowired
     private CommonConfigsService commonConfigsService;
+    //    @Autowired
+//    private GoodsRepository goodsRepository;
     @Autowired
-    private GoodsRepository goodsRepository;
+    private FinancialBuyFlowService financialBuyFlowService;
     @Autowired
     private GoodsService goodsService;
     @Autowired
@@ -160,6 +161,7 @@ public class FinancialGoodsController {
         financialGoods.setTitle(title);
         financialGoods.setRate(rate);
         financialGoods.setRedeemPeriod(redeemPeriod);
+        financialGoods.setCreateTime(new Date());
         financialGoodsRepository.save(financialGoods);
         ModelMap map = new ModelMap();
         map.addAttribute("success", true);
@@ -214,25 +216,6 @@ public class FinancialGoodsController {
      * @return 商品列表
      * @throws IOException
      */
-//    @SuppressWarnings("SpellCheckingInspection")
-//    @RequestMapping(value = "/getGoodsList", method = {RequestMethod.GET, RequestMethod.POST})
-//    public ModelAndView getGoodsList(@CustomerId Long customerId, @RequestParam(value = "page", required = false) Integer page,
-//                                     @RequestParam(value = "pageSize", required = false) Integer pageSize) throws IOException {
-//        Sort sort = new Sort(Sort.Direction.DESC, "id");
-//        if (Objects.isNull(page)) page = list_page;
-//        if (Objects.isNull(pageSize)) pageSize = list_pageSize;
-//        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
-//        Page<Goods> pages = goodsRepository.findByOwner_Id(customerId, pageable);
-//        List<GoodsModel> list = changeDomainToModelList(pages.getContent());
-////        Page<Goods> pages = goodsService.
-//        Long count = pages.getTotalElements();
-//        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
-//        return RestUtil.success("/manage/goodsList", new BasicNameValuePair("total", pages.getTotalElements()),
-//                new BasicNameValuePair("pageSize", pageSize),
-//                new BasicNameValuePair("list", list),
-//                new BasicNameValuePair("page", page),
-//                new BasicNameValuePair("pageCount", pageCount));
-//    }
     @SuppressWarnings("SpellCheckingInspection")
     @RequestMapping(value = "/getGoodsList", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -257,25 +240,6 @@ public class FinancialGoodsController {
         return map;
     }
 
-//    @RequestMapping(value = "/getGoodsListAjax", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ModelMap getGoodsListAjax(@CustomerId Long customerId,@RequestParam int page,
-//                                 @RequestParam int pageSize) throws IOException {
-//        Sort sort = new Sort(Sort.Direction.DESC, "id");
-//        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
-//        Page<Goods> pages = goodsRepository.findByOwner_Id(customerId, pageable);
-//        List<GoodsModel> list = changeDomainToModelList(pages.getContent());
-//        Long count = pages.getTotalElements();
-//        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
-//        ModelMap map = new ModelMap();
-//        map.addAttribute("total", pages.getTotalElements());
-//        map.addAttribute("pageSize", pageSize);
-//        map.addAttribute("list", list);
-//        map.addAttribute("page", page);
-//        map.addAttribute("pageCount", pageCount);
-//        return map;
-//    }
-
     private List<GoodsModel> changeDomainToModelList(List<Goods> domains) {
         List<GoodsModel> list = new ArrayList<>();
         for (Goods goods : domains) {
@@ -298,40 +262,30 @@ public class FinancialGoodsController {
      * @return /manage/buyFlowIndex.html
      * @throws IOException
      */
+    @RequestMapping(value = "/buyFlowIndex", method = RequestMethod.GET)
     public ModelAndView buyFlowIndex(@CustomerId Long customerId, @RequestParam Long id,
+                                     @RequestParam(required = false) String no,
                                      @RequestParam(required = false) Integer page,
-                                     @RequestParam(required = false) Integer pageSize) throws IOException {
+                                     @RequestParam(required = false) Integer pageSize) throws IOException, UserException {
         Sort sort = new Sort(Sort.Direction.DESC, "buyTime");
-        Pageable pageable = new PageRequest(page, pageSize, sort);
-        Page<FinancialBuyFlow> pages = financialBuyFlowRepository.findAllByCustomerId(customerId, pageable);
+        if (Objects.isNull(page)) page = list_page;
+        if (Objects.isNull(pageSize)) pageSize = list_pageSize;
+        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
+        Page<FinancialBuyFlow> pages = financialBuyFlowService.findAllByCustomerIdAndGoodIdAndNo(customerId, id, no, pageable);
+        List<BuyFlowModel> list = financialBuyFlowService.changeDomainToModelList(pages.getContent());
         Long count = pages.getTotalElements();
         int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+        String url = commonConfigsService.getWebUrl() +
+                "/financialGoods/buyFlowIndex?id=" + id;
+        String rootURL = no == null ? url : url + "&&no=" + no;
         return RestUtil.success("/manage/buyFlowIndex", new BasicNameValuePair("customerId", customerId),
                 new BasicNameValuePair("total", pages.getTotalElements()),
                 new BasicNameValuePair("pageSize", pageSize),
                 new BasicNameValuePair("page", page),
                 new BasicNameValuePair("pageCount", pageCount),
-                new BasicNameValuePair("url", getIndexURL() + "?page="),
-                new BasicNameValuePair("list", pages.getContent()));
-    }
-
-    /**
-     * 用户理财列表
-     *
-     * @param page       页码
-     * @param pageSize   每页条数
-     * @param customerId 商户id
-     * @return 用户理财列表
-     * @throws IOException
-     */
-    @RequestMapping(value = "/getPageBuyFlow", method = RequestMethod.GET)
-    @ResponseBody
-    public Page<FinancialBuyFlow> getPageBuyFlow(@RequestParam int page, @RequestParam int pageSize,
-                                                 @CustomerId Long customerId) throws IOException {
-        Sort sort = new Sort(Sort.Direction.DESC, "buyTime");
-        Pageable pageable = new PageRequest(page, pageSize, sort);
-        Page<FinancialBuyFlow> pages = financialBuyFlowRepository.findAllByCustomerId(customerId, pageable);
-        return pages;
+                new BasicNameValuePair("url", rootURL + "&&page="),
+                new BasicNameValuePair("searchUrl", url + "&&no="),
+                new BasicNameValuePair("list", list));
     }
 
     /**
@@ -339,20 +293,32 @@ public class FinancialGoodsController {
      *
      * @param page     页码
      * @param pageSize 每日条数
-     * @param userId   用户id
      * @param no       期号
      * @return 流水列表
      * @throws IOException
      */
     @RequestMapping(value = "/getPageProfit", method = RequestMethod.GET)
-    @ResponseBody
-    public Page<FinancialProfit> getPageProfit(@RequestParam int page, @RequestParam int pageSize,
-                                               @RequestParam Long userId, @RequestParam String no) throws IOException {
+    public ModelAndView getPageProfit(@RequestParam(required = false) Integer page,
+                                      @RequestParam(required = false) Integer pageSize,
+                                      @RequestParam Long goodsId,
+                                      @RequestParam String no) throws IOException {
         Sort sort = new Sort(Sort.Direction.DESC, "time");
-        Pageable pageable = new PageRequest(page, pageSize, sort);
-        Page<FinancialProfit> pages = financialProfitRepository.findAllByUserIdAndNo(userId, no, pageable);
-
-        return pages;
+        if (Objects.isNull(page)) page = list_page;
+        if (Objects.isNull(pageSize)) pageSize = list_pageSize;
+        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
+        Page<FinancialProfit> pages = financialProfitRepository.findAllByNo(no, pageable);
+        Long count = pages.getTotalElements();
+        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+        String url = commonConfigsService.getWebUrl() +
+                "/financialGoods/getPageProfit?no=" + no;
+        return RestUtil.success("/manage/profitIndex",
+                new BasicNameValuePair("total", pages.getTotalElements()),
+                new BasicNameValuePair("pageSize", pageSize),
+                new BasicNameValuePair("page", page),
+                new BasicNameValuePair("goodsId", goodsId),
+                new BasicNameValuePair("pageCount", pageCount),
+                new BasicNameValuePair("url", url + "&&page="),
+                new BasicNameValuePair("list", pages.getContent()));
     }
 
     /**

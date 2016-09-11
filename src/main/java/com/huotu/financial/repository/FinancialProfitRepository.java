@@ -19,7 +19,6 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Administrator on 2016/8/29.
@@ -30,12 +29,11 @@ public interface FinancialProfitRepository extends JpaRepository<FinancialProfit
     /**
      * 根据用户id和理财编号查询每日流水
      *
-     * @param userId   用户id
      * @param no       理财产品编号
      * @param pageable 分页
      * @return 每日流水列表
      */
-    Page<FinancialProfit> findAllByUserIdAndNo(@Param("userId") Long userId, @Param("no") String no, Pageable pageable);
+    Page<FinancialProfit> findAllByNo(@Param("no") String no, Pageable pageable);
 
     @Query("select sum(profit.money) from FinancialProfit profit where profit.userId=?1 and profit.time>=?2 and profit.time<?3")
     BigDecimal countYestodayProfit(Long userId, Date start, Date end);

@@ -14,6 +14,7 @@ import com.huotu.financial.enums.FinancialStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -26,7 +27,7 @@ import java.util.List;
  * Created by Administrator on 2016/8/29.
  */
 @Repository
-public interface FinancialBuyFlowRepository extends JpaRepository<FinancialBuyFlow, String> {
+public interface FinancialBuyFlowRepository extends JpaRepository<FinancialBuyFlow, String>, JpaSpecificationExecutor<FinancialBuyFlow> {
     List<FinancialBuyFlow> findAllByStatus(FinancialStatus status);
 
 //    List<FinancialBuyFlow> findAllByUserIdAndIsUsedAndBuyTimeGreaterThanAndMoneyGreaterThanEqual(Long userId, Boolean isUsed, Date buyTime, BigDecimal money);
@@ -41,10 +42,13 @@ public interface FinancialBuyFlowRepository extends JpaRepository<FinancialBuyFl
      * 根据商户id查询用户理财列表
      *
      * @param customerId 商户id
+     * @param goodId     商品id
      * @param pageable   分页
      * @return 用户理财列表
+     * @deprecated 使用 {@link com.huotu.financial.service.FinancialBuyFlowService#findAllByCustomerIdAndGoodIdAndNo(Long, Long, String, Pageable)}
      */
-    Page<FinancialBuyFlow> findAllByCustomerId(@Param("customerId") Long customerId, Pageable pageable);
+    Page<FinancialBuyFlow> findAllByCustomerIdAndGoodId(@Param("customerId") Long customerId,
+                                                        @Param("goodId") Long goodId, Pageable pageable);
 
 
     /**

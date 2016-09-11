@@ -30,13 +30,16 @@ import com.huotu.huobanplus.common.entity.Goods;
 import com.huotu.huobanplus.common.entity.OrderItems;
 import com.huotu.huobanplus.common.entity.User;
 import com.huotu.huobanplus.common.repository.OrderItemsRepository;
-import com.huotu.huobanplus.common.repository.OrderRepository;
 import com.huotu.huobanplus.common.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.Predicate;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -215,6 +218,17 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
     @Override
     public BigDecimal profitTotal(Long userId) {
         return financialProfitRepository.countTotalProfit(userId);
+    }
+
+    @Override
+    public Page<FinancialBuyFlow> findAllByCustomerIdAndGoodIdAndNo(Long customerId, Long goodId, String no, Pageable pageable) throws IOException {
+        return financialBuyFlowRepository.findAll((root, query, cb) -> {
+            Predicate predicate = cb.and(cb.equal(root.get("customerId").as(Long.class), customerId),
+                    cb.equal(root.get("goodId").as(Long.class), goodId));
+            if (!StringUtils.isEmpty(no))
+                predicate = cb.and(predicate, cb.like(root.get("no").as(String.class), "%" + no + "%"));
+            return predicate;
+        }, pageable);
     }
 
 

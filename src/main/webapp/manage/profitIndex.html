@@ -14,7 +14,7 @@
     <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.0.css" rel="stylesheet"/>
-    <title>理财活动列表</title>
+    <title>用户理财列表</title>
     <script th:inline="javascript">
         var rootURL = /*[[${url}]]*/'www.baidu.com';
         var pageIndex = /*[[${page}]]*/'1';
@@ -30,36 +30,26 @@
                 <table class="table table-bordered table-hover table-center">
                     <thead>
                     <tr>
-                        <th colspan="8" style="color: #636e7b; padding-bottom: 0px; text-align: left;">
+                        <th colspan="3" style="color: #636e7b; padding-bottom: 5px; text-align: left;">
                             <!--<label><img src="/images/remark_icons/b1.gif" width="20" height="20" /></label>-->
-                            <span style="font-size: 20px;">理财活动列表</span>
-
+                            <span style="font-size: 20px;">用户收益列表</span>
                             <p style="float: right;">
-                                <a th:href="@{/financialGoods/addPage}" href="javascript:void(0);"
-                                   class="btn btn-success btn-sm">新增活动</a>
+                                <a th:href="@{/financialGoods//buyFlowIndex(id=${goodsId})}" href="javascript:void(0);"
+                                   class="btn btn-success btn-sm">返回</a>
                             </p>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td>商品信息</td>
-                        <td>日利率</td>
-                        <td>赎回周期</td>
-                        <td>操作</td>
+                        <td>理财编号</td>
+                        <td>收益金额</td>
+                        <td>收益时间</td>
                     </tr>
-                    <tr th:each="financial:${list}">
-                        <td th:text="${financial.title}">商品1</td>
-                        <td th:text="${financial.rate}">0.0001</td>
-                        <td th:text="${financial.redeemPeriod}">1</td>
-                        <td>
-                            <a class="btn btn-success btn-sm" href="javascript:void(0)"
-                               th:href="@{/financialGoods/buyFlowIndex(id=${financial.id})}">
-                                <i class="fa fa-check"></i>&nbsp;查看记录</a>&nbsp;&nbsp;
-                            <a class="btn btn-success btn-sm" href="javascript:void(0)"
-                               th:href="@{/financialGoods/editPage(id=${financial.id})}">
-                                <i class="fa fa-paste"></i>&nbsp;编辑</a>
-                        </td>
+                    <tr th:each="profit:${list}">
+                        <td th:text="${profit.no}">2016091110421110313</td>
+                        <td th:text="${profit.money}">10000</td>
+                        <td th:text="${#calendars.format(profit.time,'yyyy-MM-dd HH:mm:ss')}">2014-05-31 13:57:11</td>
                     </tr>
                     </tbody>
                 </table>
@@ -67,7 +57,7 @@
                 <p style="float: left; margin: 20px 0;">共<span th:text="${total}">1</span>条记录，
                     当前第<span th:text="${page}">1</span>/<span th:text="${pageCount}">10</span>，
                     每页<span th:text="${pageSize}">20</span>条记录</p>
-                <ul style="float: right;" class="pagination pagination-split" id="financialList">
+                <ul style="float: right;" class="pagination pagination-split" id="profitList">
                 </ul>
             </div>
         </div>
@@ -83,8 +73,7 @@
 
     $(function () {
         //初始化分页
-        var pageinate = new hot.paging("#financialList", pageIndex, totalPage, 7);
-
+        var pageinate = new hot.paging("#profitList", pageIndex, totalPage, 7);
         pageinate.init(function (p) {
             window.location.href = rootURL + p;
         });

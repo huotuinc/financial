@@ -20,6 +20,8 @@ import com.huotu.financial.model.ViewBuyListModel;
 import com.huotu.financial.model.ViewFinancialTotalModel;
 import com.huotu.huobanplus.common.entity.OrderItems;
 import com.huotu.huobanplus.common.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -79,6 +81,18 @@ public interface FinancialBuyFlowService {
      * @return
      */
     BigDecimal profitTotal(Long userId);
+
+    /**
+     * 根据条件查询用户理财列表
+     *
+     * @param customerId 商户id
+     * @param goodId     商品id
+     * @param no         理财编号
+     * @param pageable   分页
+     * @return 用户理财列表
+     * @throws IOException
+     */
+    Page<FinancialBuyFlow> findAllByCustomerIdAndGoodIdAndNo(Long customerId, Long goodId, String no, Pageable pageable) throws IOException;
 
     /**
      * 创建创建理财编号
