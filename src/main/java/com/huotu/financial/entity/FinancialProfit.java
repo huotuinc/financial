@@ -53,6 +53,6 @@ public class FinancialProfit {
     /**
      * 时间
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date time;
 }
