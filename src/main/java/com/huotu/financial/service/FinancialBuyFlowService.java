@@ -11,6 +11,7 @@ package com.huotu.financial.service;
 
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
+import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
 import com.huotu.financial.exceptions.NoRedeemStatusException;
@@ -95,6 +96,18 @@ public interface FinancialBuyFlowService {
     Page<FinancialBuyFlow> findAllByCustomerIdAndGoodIdAndNo(Long customerId, Long goodId, String no, Pageable pageable) throws IOException;
 
     /**
+     * 根据条件查询用户理财列表
+     *
+     * @param customerId 商户id
+     * @param no         理财编号
+     * @param status     状态
+     * @param pageable   分页
+     * @return 用户理财列表
+     * @throws IOException
+     */
+    Page<FinancialBuyFlow> findAllByCustomerIdAndNoAndStatus(Long customerId, String no, FinancialStatus status, Pageable pageable) throws IOException;
+
+    /**
      * 创建创建理财编号
      *
      * @param date   当前时间
@@ -105,6 +118,7 @@ public interface FinancialBuyFlowService {
 
     /**
      * 处理付款通知
+     *
      * @param userId
      * @param orderId
      */
@@ -112,13 +126,13 @@ public interface FinancialBuyFlowService {
 
     /**
      * 保存流水
+     *
      * @param financialGoods
      * @param orderItems
      * @param user
      * @param orderId
      */
     void save(FinancialGoods financialGoods, OrderItems orderItems, User user, String orderId);
-
 
 
 }

@@ -12,8 +12,10 @@ package com.huotu.financial.controller;
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
 import com.huotu.financial.entity.FinancialProfit;
+import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.exceptions.UserException;
-import com.huotu.financial.model.*;
+import com.huotu.financial.model.BuyFlowModel;
+import com.huotu.financial.model.GoodsModel;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.repository.FinancialGoodsRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
@@ -330,35 +332,71 @@ public class FinancialGoodsController {
      */
     @RequestMapping(value = "/updateFlowStatus", method = RequestMethod.POST)
     @ResponseBody
-    public ModelAndView updateFlowStatus(@RequestParam String no) throws IOException {
+    public ModelMap updateFlowStatus(@RequestParam String no) throws IOException {
         return financialGoodsService.updateFlowStatus(no);
 
     }
 
+//    @RequestMapping(value = "/redeemList", method = RequestMethod.GET)
+//    public String redeemList(@CustomerId Long customerId, Model model) {
+//        model.addAttribute("customerId", customerId);
+//        return "manage/redeemlist";
+//    }
+
     @RequestMapping(value = "/redeemList", method = RequestMethod.GET)
-    public String redeemList() {
-        return "manage/redeemlist";
+    public ModelAndView redeemList(@CustomerId Long customerId,
+                                   @RequestParam(required = false) String no,
+                                   @RequestParam(required = false) Integer page,
+                                   @RequestParam(required = false) Integer pageSize) throws IOException, UserException {
+        Sort sort = new Sort(Sort.Direction.DESC, "buyTime");
+        if (Objects.isNull(page)) page = list_page;
+        if (Objects.isNull(pageSize)) pageSize = list_pageSize;
+        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
+        Page<FinancialBuyFlow> pages = financialBuyFlowService.findAllByCustomerIdAndNoAndStatus(customerId, no,
+                FinancialStatus.DOING, pageable);
+        List<BuyFlowModel> list = financialBuyFlowService.changeDomainToModelList(pages.getContent());
+        Long count = pages.getTotalElements();
+        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+        String url = commonConfigsService.getWebUrl() +
+                "/financialGoods/redeemList";
+        String rootURL = no == null ? url + "?page=" : url + "?no=" + no + "&&page=";
+        return RestUtil.success("manage/redeemlist", new BasicNameValuePair("customerId", customerId),
+                new BasicNameValuePair("total", pages.getTotalElements()),
+                new BasicNameValuePair("pageSize", pageSize),
+                new BasicNameValuePair("page", page),
+                new BasicNameValuePair("pageCount", pageCount),
+                new BasicNameValuePair("url", rootURL),
+                new BasicNameValuePair("searchUrl", url + "?no="),
+                new BasicNameValuePair("list", list));
     }
 
-    @RequestMapping(value = "/redeemlist.do")
-    @ResponseBody
-    public ViewRedeemListPageModel redeemListDo() {
-        ViewRedeemListPageModel viewRedeemListPageModel = new ViewRedeemListPageModel();
-        PagingModel pagingModel = new PagingModel();
-        pagingModel.setPageNo(1);
-        pagingModel.setPageSize(5);
-        pagingModel.setRecordCount(60);
-        pagingModel.setTotalPage(6);
-        viewRedeemListPageModel.setPage(pagingModel);
-
-        List<ViewRedeemListModel> list = new ArrayList<>();
-        list.add(new ViewRedeemListModel("001", "lgh", "20%利润", new Date()));
-        list.add(new ViewRedeemListModel("002", "lgh", "20%利润", new Date()));
-        list.add(new ViewRedeemListModel("003", "lgh", "20%利润", new Date()));
-        list.add(new ViewRedeemListModel("004", "lgh", "20%利润", new Date()));
-        list.add(new ViewRedeemListModel("005", "lgh", "20%利润", new Date()));
-
-        viewRedeemListPageModel.setList(list);
-        return viewRedeemListPageModel;
-    }
+//    @RequestMapping(value = "/redeemlist.do")
+//    @ResponseBody
+//    public ViewRedeemListPageModel redeemListDo(@RequestParam(required = false) Integer page,
+//                                                @RequestParam(required = false) Integer pageSize,
+//                                                @RequestParam(required = false) String no) {
+//
+//        Sort sort = new Sort(Sort.Direction.DESC, "buyTime");
+//        if (Objects.isNull(page)) page = list_page;
+//        if (Objects.isNull(pageSize)) pageSize = list_pageSize;
+//        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
+//        Page<FinancialBuyFlow> pages = financialBuyFlowService.findAllByCustomerIdAndGoodIdAndNo(customerId, id, no, pageable);
+//        ViewRedeemListPageModel viewRedeemListPageModel = new ViewRedeemListPageModel();
+//        PagingModel pagingModel = new PagingModel();
+//        pagingModel.setPageNo(page);
+//        pagingModel.setPageSize(pageSize);
+//        pagingModel.setRecordCount(pages.getTotalElements());
+//        pagingModel.setTotalPage(6);
+//        viewRedeemListPageModel.setPage(pagingModel);
+//
+//        List<ViewRedeemListModel> list = new ArrayList<>();
+//        list.add(new ViewRedeemListModel("001", "lgh", "20%利润", new Date()));
+//        list.add(new ViewRedeemListModel("002", "lgh", "20%利润", new Date()));
+//        list.add(new ViewRedeemListModel("003", "lgh", "20%利润", new Date()));
+//        list.add(new ViewRedeemListModel("004", "lgh", "20%利润", new Date()));
+//        list.add(new ViewRedeemListModel("005", "lgh", "20%利润", new Date()));
+//
+//        viewRedeemListPageModel.setList(list);
+//        return viewRedeemListPageModel;
+//    }
 }

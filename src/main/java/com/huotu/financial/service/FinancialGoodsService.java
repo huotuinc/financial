@@ -9,7 +9,7 @@
 
 package com.huotu.financial.service;
 
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.ModelMap;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -27,5 +27,5 @@ public interface FinancialGoodsService {
      * @throws IOException
      */
     @Transactional
-    ModelAndView updateFlowStatus(String no) throws IOException;
+    ModelMap updateFlowStatus(String no) throws IOException;
 }

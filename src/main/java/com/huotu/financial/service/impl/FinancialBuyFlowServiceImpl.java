@@ -231,6 +231,19 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         }, pageable);
     }
 
+    @Override
+    public Page<FinancialBuyFlow> findAllByCustomerIdAndNoAndStatus(Long customerId, String no, FinancialStatus status,
+                                                                    Pageable pageable) throws IOException {
+        return financialBuyFlowRepository.findAll((root, query, cb) -> {
+            Predicate predicate = cb.and(cb.equal(root.get("customerId").as(Long.class), customerId));
+            if (!StringUtils.isEmpty(no))
+                predicate = cb.and(predicate, cb.like(root.get("no").as(String.class), "%" + no + "%"));
+            if (!StringUtils.isEmpty(status))
+                predicate = cb.and(predicate, cb.equal(root.get("status").as(FinancialStatus.class), status));
+            return predicate;
+        }, pageable);
+    }
+
 
     public String createFinancialNo(Date date, Long userId) {
         //订单号

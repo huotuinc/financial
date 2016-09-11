@@ -13,15 +13,13 @@ import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.service.FinancialGoodsService;
-import com.huotu.financial.util.RestUtil;
-import com.huotu.financial.util.support.BasicNameValuePair;
 import com.huotu.huobanplus.common.entity.MallAdvanceLogs;
 import com.huotu.huobanplus.common.entity.User;
 import com.huotu.huobanplus.common.repository.MallAdvanceLogsRepository;
 import com.huotu.huobanplus.common.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.ModelMap;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -43,11 +41,15 @@ public class FinancialGoodsServiceImpl implements FinancialGoodsService {
 
     @Transactional
     @Override
-    public synchronized ModelAndView updateFlowStatus(String no) throws IOException {
+    public synchronized ModelMap updateFlowStatus(String no) throws IOException {
         FinancialBuyFlow flow = financialBuyFlowRepository.getOne(no);
-        if (!flow.getStatus().equals(FinancialStatus.DOING))
-            return RestUtil.success(null, new BasicNameValuePair("msg", "赎回失败，请核对信息后再进行操作"),
-                    new BasicNameValuePair("success", false));
+        ModelMap map = new ModelMap();
+        if (!flow.getStatus().equals(FinancialStatus.DOING)) {
+            map.addAttribute("success", false);
+            map.addAttribute("msg", "赎回失败，请核对信息后再进行操作");
+            return map;
+        }
+
         flow.setStatus(FinancialStatus.REDEEMED);
         financialBuyFlowRepository.save(flow);
 
@@ -57,7 +59,8 @@ public class FinancialGoodsServiceImpl implements FinancialGoodsService {
         user.setUserBalance(new BigDecimal(userBalance).add(flow.getMoney()).doubleValue());
         userRepository.save(user);
         save(user, flow.getMoney(), flow);
-        return RestUtil.success(null, new BasicNameValuePair("success", true));
+        map.addAttribute("success", true);
+        return map;
     }
 
     /**
