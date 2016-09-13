@@ -5,6 +5,7 @@ import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
 import com.huotu.financial.exceptions.NoRedeemStatusException;
+import com.huotu.financial.model.ResultModel;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.service.CommonConfigsService;
 import com.huotu.financial.service.FinancialBuyFlowService;
@@ -96,11 +97,35 @@ public class UserController {
 
     @RequestMapping(value = "/redeem", method = RequestMethod.POST)
     @ResponseBody
-    public String redeem(@RequestParam(value = "no") String no) throws NoRedeemStatusException, NoFindRedeemAmountException, ParseException, NoReachRedeemPeriodException {
+    public ResultModel redeem(@RequestParam(value = "no") String no) {
+        ResultModel resultModel = new ResultModel();
+
         FinancialBuyFlow financialBuyFlow = financialBuyFlowRepository.findOne(no);
         if (financialBuyFlow != null) {
-            financialBuyFlowService.handleRedeem(financialBuyFlow);
+
+            try {
+                financialBuyFlowService.handleRedeem(financialBuyFlow);
+            } catch (NoFindRedeemAmountException e) {
+                resultModel.setCode("60001");
+                resultModel.setMessage(e.getMessage());
+                return resultModel;
+            } catch (ParseException e) {
+                resultModel.setCode("60002");
+                resultModel.setMessage(e.getMessage());
+                return resultModel;
+            } catch (NoRedeemStatusException e) {
+                resultModel.setCode("60003");
+                resultModel.setMessage(e.getMessage());
+                return resultModel;
+            } catch (NoReachRedeemPeriodException e) {
+                resultModel.setCode("60004");
+                resultModel.setMessage(e.getMessage());
+                return resultModel;
+            }
         }
-        return "success";
+
+        resultModel.setCode("1");
+        resultModel.setMessage("");
+        return resultModel;
     }
 }

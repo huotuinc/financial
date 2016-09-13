@@ -48,22 +48,22 @@
         }
 
         page.list = function () {
-            $.get("/financial/financialList"
+            $.post("/financial/financialList"
                     , requestData
                     , function (data) {
                         var html = "";
-                        var template = $("#template").html();
                         for (var i = 0; i < data.length; i++) {
                             var row = data[i];
-                            template += template.replace("{no}", row.no);
-                            template += template.replace("{imageUrl}", row.imageUrl);
-                            template += template.replace("{title}", row.title);
-                            template += template.replace("{price}", row.price);
-                            template += template.replace("{amount}", row.amount);
-                            template += template.replace("{moeny}", row.moeny);
-                            template += template.replace("{date}", row.date);
-                            template += template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
-                            template += template.replace("{status_value}", row.status);
+                            var template = $("#template").html();
+                            template = template.replace("{no}", row.no).replace("{no}", row.no);
+                            template = template.replace("{imageUrl}", row.imageUrl);
+                            template = template.replace("{title}", row.title);
+                            template = template.replace("{price}", row.price);
+                            template = template.replace("{amount}", row.amount).replace("{amount}", row.amount);
+                            template = template.replace("{moeny}", row.moeny);
+                            template = template.replace("{date}", new Date(row.date).format("yyyy-MM-dd hh:mm:ss"));
+                            template = template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
+                            template = template.replace("{status_value}", row.status);
                             html += template;
                             if (i == data.length - 1) requestData.lastTime = row.date;
                         }
@@ -76,7 +76,7 @@
             $("#tab a").click(function () {
                 $("#tab a").removeClass("weui_bar_item_on");
                 $(this).addClass("weui_bar_item_on");
-                var index = $(this).index($(this).parent());
+                var index = $(this).index();
                 requestData.status = index;
                 requestData.lastTime = 0;
                 $("#list").html("");
@@ -93,7 +93,7 @@
                 setTimeout(function () {
                     page.list();
                     loading = false;
-                }, 100);   //模拟延迟
+                }, 500);   //模拟延迟
             });
         }
 
@@ -101,8 +101,11 @@
             if (status == 1) {
                 requestRedeemData.no = no;
                 $.post("/user/redeem", requestRedeemData, function (data) {
-                    if (data == "success") window.location.href = window.location.href;
-                    else alert("申请失败");
+                    if (data.code == "1") {
+                        alert("回购成功");
+                        window.location.href = window.location.href;
+                    }
+                    else alert(data.message);
                 });
             }
         }
@@ -115,46 +118,22 @@
         }
 
 
-        //        function total() {
-        //            $.get("/financial/financialTotal"
-        //                    , ""
-        //                    , function (data) {
-        //                        $("#money").text(data.money);
-        //                        $("#yesterdayIncome").text(data.yesterdayIncome);
-        //                        $("#totalIncome").text(data.totalIncome);
-        //                    });
-        //        }
-        //
-        //        function list() {
-        //            $.get("/financial/financialList"
-        //                    , requestData
-        //                    , function (data) {
-        //                        var html = "";
-        //                        var template = $("#template").html();
-        //                        for (var i = 0; i < data.length; i++) {
-        //                            var row = data[i];
-        //                            html += template.replace("{no}", row.no);
-        //                            html += template.replace("{imageUrl}", row.imageUrl);
-        //                            html += template.replace("{title}", row.title);
-        //                            html += template.replace("{price}", row.price);
-        //                            html += template.replace("{amount}", row.amount);
-        //                            html += template.replace("{moeny}", row.moeny);
-        //                            html += template.replace("{date}", row.date);
-        //                            html += template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
-        //                        }
-        //                        $("#list").append(html);
-        //                    });
-        //        }
-        //
-        //        function tab() {
-        //            $("#tab a").click(function () {
-        //                $("#tab a").removeClass("weui_bar_item_on");
-        //                $(this).addClass("weui_bar_item_on");
-        //                var index = $(this).index($(this).parent());
-        //                requestData.status = index;
-        //                list();
-        //            });
-        //        }
+        Date.prototype.format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+
 
     </script>
 </head>

@@ -47,7 +47,7 @@ public class FinancialController {
      * @param lastTime 最后一条时间
      * @return
      */
-    @RequestMapping(value = "/financialList", method = RequestMethod.GET)
+    @RequestMapping(value = "/financialList")
     @ResponseBody
     public List<ViewBuyListModel> financialList(@RequestParam(value = "status") Integer status
             , @RequestParam(value = "lastTime", required = false) Long lastTime) {
@@ -74,7 +74,7 @@ public class FinancialController {
         return financialBuyFlowService.profitTotal(userId);
     }
 
-    @RequestMapping(value = "/profitList", method = RequestMethod.GET)
+    @RequestMapping(value = "/profitList")
     @ResponseBody
     public List<ViewProfitListModel> profitList(Long lastId) {
         Long userId = PublicParameterHolder.get().getUserId();

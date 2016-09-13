@@ -1,7 +1,9 @@
 package com.huotu.financial.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -18,6 +20,7 @@ public class ViewBuyListModel {
     private BigDecimal price;
     private Integer amount;
     private BigDecimal moeny;
+
     private Date date;
     /**
      * 0 不可赎回 1 可赎回
