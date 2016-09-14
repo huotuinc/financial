@@ -10,8 +10,10 @@
 package com.huotu.financial.controller;
 
 import com.huotu.financial.WebTest;
+import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
 import com.huotu.financial.repository.FinancialGoodsRepository;
+import com.huotu.huobanplus.common.entity.Goods;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,12 +21,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -35,6 +36,8 @@ public class FinancialGoodsControllerTest extends WebTest {
 
     @Autowired
     private FinancialGoodsRepository financialGoodsRepository;
+
+    private Random random = new Random();
 
     @Test
     @Rollback
@@ -66,9 +69,43 @@ public class FinancialGoodsControllerTest extends WebTest {
     }
 
     @Test
-    public void b() {
-        Long i = null;
-        if (i != null && i > 0) System.out.println("false");
+    @Rollback
+    public void checkGoodsUsed() throws Exception {
+        Goods goods = randomGoods();
+        String status = mockMvc.perform(get("/financialGoods/checkGoodsUsed")
+                .param("id", goods.getId().toString()))
+                .andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertEquals("", status, "true");
+        randomFinancialGoods(goods.getId());
+        String newStatus = mockMvc.perform(get("/financialGoods/checkGoodsUsed")
+                .param("id", goods.getId().toString()))
+                .andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertEquals("", newStatus, "false");
+    }
 
+
+    @Test
+    @Rollback
+    public void buyFlowIndex() throws Exception {
+        Goods goods = randomGoods();
+        FinancialGoods financialGoods = randomFinancialGoods(goods.getId());
+        ModelAndView view = mockMvc.perform(get("/financialGoods/buyFlowIndex")
+                .param("id", financialGoods.getId().toString()))
+                .andExpect(status().isOk()).andReturn().getModelAndView();
+        Map<String, Object> map = view.getModel();
+        assertEquals("", Long.parseLong(String.valueOf(map.get("total"))), 0L);
+        int size = random.nextInt(10) + 20;
+        int i = 0;
+        List<FinancialBuyFlow> list = new LinkedList<>();
+        while (i < size) {
+            FinancialBuyFlow flow = randomFinancialBuyFlow(financialGoods.getId());
+            list.add(flow);
+            i++;
+        }
+        ModelAndView newView = mockMvc.perform(get("/financialGoods/buyFlowIndex")
+                .param("id", financialGoods.getId().toString()))
+                .andExpect(status().isOk()).andReturn().getModelAndView();
+        Map<String, Object> newMap = newView.getModel();
+        assertEquals("", Long.parseLong(String.valueOf(newMap.get("total"))), list.size());
     }
 }

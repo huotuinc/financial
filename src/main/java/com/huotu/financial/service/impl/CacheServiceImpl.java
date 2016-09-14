@@ -38,12 +38,14 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public UserModel getOneByUserId(Long userId) throws IOException, UserException {
+        UserModel model = new UserModel();
+        if (Objects.isNull(userId))
+            return model;
         if (userMap.containsKey(userId))
             return userMap.get(userId);
         User user = userRepository.findOne(userId);
         if (Objects.isNull(user))
             throw new UserException("用户不存在");
-        UserModel model = new UserModel();
         model.setUserId(user.getId());
         model.setWxName(user.getWxNickName());
         model.setWxImgURL(user.getWeixinImageUrl());
