@@ -44,7 +44,7 @@ public class FinancialGoodsControllerTest extends WebTest {
     public void index() throws Exception {
         ModelAndView view = mockMvc.perform(get("/financialGoods/index"))
                 .andExpect(status().isOk()).andReturn().getModelAndView();
-        assertEquals("", view.getViewName(), "/financial/index");
+        assertEquals("", view.getViewName(), "/manage/index");
         Map<String, Object> map = view.getModel();
         assertEquals("", ((Page<FinancialGoods>) map.get("pages")).getTotalElements(), 0);
         Long customerId = Long.parseLong(map.get("customerId").toString());
