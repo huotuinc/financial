@@ -17,6 +17,7 @@ import com.huotu.huobanplus.common.entity.Goods;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,8 +47,9 @@ public class FinancialGoodsControllerTest extends WebTest {
                 .andExpect(status().isOk()).andReturn().getModelAndView();
         assertEquals("", view.getViewName(), "/manage/index");
         Map<String, Object> map = view.getModel();
-        assertEquals("", ((Page<FinancialGoods>) map.get("pages")).getTotalElements(), 0);
         Long customerId = Long.parseLong(map.get("customerId").toString());
+        Page<FinancialGoods> page = financialGoodsRepository.findAllByCustomerId(customerId, new PageRequest(0, 20));
+        assertEquals("", Long.parseLong(String.valueOf(map.get("total"))), page.getTotalElements());
         Random random = new Random();
         int size = random.nextInt(10);
         for (int i = 0; i < size; i++) {
@@ -60,7 +62,7 @@ public class FinancialGoodsControllerTest extends WebTest {
         ModelAndView newView = mockMvc.perform(get("/financialGoods/index"))
                 .andExpect(status().isOk()).andReturn().getModelAndView();
         Map<String, Object> newMap = newView.getModel();
-        assertEquals("", ((Page<FinancialGoods>) newMap.get("pages")).getTotalElements(), size);
+        assertEquals("", Long.parseLong(String.valueOf(newMap.get("total"))), size + page.getTotalElements());
     }
 
     @Test
