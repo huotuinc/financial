@@ -228,7 +228,7 @@ public class FinancialGoodsController {
         if (Objects.isNull(pageSize)) pageSize = list_pageSize;
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
 //        Page<Goods> pages = goodsRepository.findByOwner_Id(customerId, pageable);
-        Page<Goods> pages = goodsService.findNormalEnabledByTitleAndCategory(customerId, 0, null, null, false, pageable);
+        Page<Goods> pages = goodsService.findNormalEnabledByTitleAndCategory(customerId, 99, null, null, false, pageable);
         List<GoodsModel> list = changeDomainToModelList(pages.getContent());
 
         Long count = pages.getTotalElements();
