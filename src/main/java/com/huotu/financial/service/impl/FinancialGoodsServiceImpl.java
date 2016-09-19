@@ -44,11 +44,11 @@ public class FinancialGoodsServiceImpl implements FinancialGoodsService {
     public synchronized ModelMap updateFlowStatus(String no) throws IOException {
         FinancialBuyFlow flow = financialBuyFlowRepository.getOne(no);
         ModelMap map = new ModelMap();
-        if (!flow.getStatus().equals(FinancialStatus.DOING)) {
-            map.addAttribute("success", false);
-            map.addAttribute("msg", "赎回失败，请核对信息后再进行操作");
-            return map;
-        }
+//        if (!flow.getStatus().equals(FinancialStatus.DOING)) {
+//            map.addAttribute("success", false);
+//            map.addAttribute("msg", "赎回失败，请核对信息后再进行操作");
+//            return map;
+//        }
 
         flow.setStatus(FinancialStatus.REDEEMED);
         financialBuyFlowRepository.save(flow);
