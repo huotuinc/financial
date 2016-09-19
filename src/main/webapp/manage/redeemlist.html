@@ -132,7 +132,7 @@
             shade: [0.1, '#fff'] //0.1透明度的白色背景
         });
         $.ajax({
-            url: 'updateFlowStatus',
+            url: '../financialGoods/updateFlowStatus',
             type: 'POST',
             data: {no: $(obj).attr("flowNo")},
             success: function (result) {

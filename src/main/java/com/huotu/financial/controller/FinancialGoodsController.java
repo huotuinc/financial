@@ -330,7 +330,7 @@ public class FinancialGoodsController {
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/updateFlowStatus", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateFlowStatus", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public ModelMap updateFlowStatus(@RequestParam String no) throws IOException {
         return financialGoodsService.updateFlowStatus(no);
