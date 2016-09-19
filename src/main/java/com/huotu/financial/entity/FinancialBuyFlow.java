@@ -31,7 +31,7 @@ public class FinancialBuyFlow {
 
     /**
      * 理财编号
-     * 时间(yyyyMMddhhmmssSSS)+userid
+     * 时间(yyyyMMdd)+(8)随机
      */
     @Id
     @Column(length = 50)

@@ -9,6 +9,7 @@
 
 package com.huotu.financial.service.impl;
 
+import com.huotu.common.base.StringHelper;
 import com.huotu.financial.common.DateHelper;
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
@@ -47,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Administrator on 2016/8/29.
@@ -247,7 +249,8 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
 
     public String createFinancialNo(Date date, Long userId) {
         //订单号
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        Random random = new Random();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd" + StringHelper.randomNum(random, 8));
         return simpleDateFormat.format(date) + userId.toString();
     }
 
