@@ -24,6 +24,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "Mall_FinancialGoods")
+@Cacheable(value = false)
 public class FinancialGoods {
     /**
      * 一一对应商城商品的Id

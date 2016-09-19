@@ -25,6 +25,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "Mall_FinancialProfit")
+@Cacheable(value = false)
 public class FinancialProfit {
 
     @Id
