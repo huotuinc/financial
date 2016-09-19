@@ -280,7 +280,7 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         financialBuyFlow.setNo(no);
         financialBuyFlow.setRate(financialGoods.getRate());
         financialBuyFlow.setRedeemPeriod(financialGoods.getRedeemPeriod());
-        financialBuyFlow.setStatus(FinancialStatus.DOING);
+        financialBuyFlow.setStatus(FinancialStatus.RUNNING);
         financialBuyFlow.setToOuterOrderNo(orderId);
         financialBuyFlowRepository.save(financialBuyFlow);
     }
