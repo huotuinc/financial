@@ -57,7 +57,7 @@ public class FinancialProfitServiceImpl implements FinancialProfitService {
 
     @Transactional
     private void doOneBuy(FinancialBuyFlow financialBuyFlow) {
-        BigDecimal profit = financialBuyFlow.getMoney().multiply(financialBuyFlow.getRate());
+        BigDecimal profit = financialBuyFlow.getMoney().multiply(financialBuyFlow.getRate().divide(new BigDecimal(1000)));
         Date date = new Date();
         User user = userRepository.findOne(financialBuyFlow.getUserId());
 
