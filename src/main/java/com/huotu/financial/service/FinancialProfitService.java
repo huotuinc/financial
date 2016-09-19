@@ -13,7 +13,6 @@ public interface FinancialProfitService {
     /**
      * 每天凌晨1点进行计算收益
      */
-    @Scheduled(cron = "0 0 0 * * *")
     void countProfit();
 
 

@@ -12,6 +12,7 @@ import com.huotu.huobanplus.common.entity.User;
 import com.huotu.huobanplus.common.repository.MallAdvanceLogsRepository;
 import com.huotu.huobanplus.common.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Service
 public class FinancialProfitServiceImpl implements FinancialProfitService {
+
 
     @Autowired
     private FinancialBuyFlowRepository financialBuyFlowRepository;
@@ -45,7 +47,9 @@ public class FinancialProfitServiceImpl implements FinancialProfitService {
     private EntityManager entityManager;
 
     @Override
+    @Scheduled(cron = "0 0 0 * * *")
     public void countProfit() {
+        System.out.println("count profit entering");
         List<FinancialBuyFlow> financialBuyFlows = financialBuyFlowRepository.findAllByStatus(FinancialStatus.RUNNING);
         for (FinancialBuyFlow financialBuyFlow : financialBuyFlows) {
             doOneBuy(financialBuyFlow);
@@ -73,12 +77,18 @@ public class FinancialProfitServiceImpl implements FinancialProfitService {
         mallAdvanceLogs.setDisabled(0);
         mallAdvanceLogs.setMoney(profit.doubleValue());
         mallAdvanceLogs.setImportMoney(profit.doubleValue());
-        mallAdvanceLogs.setMemberAdvance(user.getUserBalance());
+        mallAdvanceLogs.setExplodeMoney(0D);
+        if (user.getUserBalance() != null)
+            mallAdvanceLogs.setMemberAdvance(new BigDecimal(profit.doubleValue()).add(new BigDecimal(user.getUserBalance())).doubleValue());
+        else
+            mallAdvanceLogs.setMemberAdvance(profit.doubleValue());
+        mallAdvanceLogs.setShopAdvance(0D);
         mallAdvanceLogs.setMemberId(financialBuyFlow.getUserId());
         mallAdvanceLogs.setMTime(date);
         mallAdvanceLogs.setOrderId(financialBuyFlow.getNo());
         mallAdvanceLogs.setPayMethod("理财收益");
         mallAdvanceLogs.setMemo("理财收益");
+
         mallAdvanceLogsRepository.save(mallAdvanceLogs);
 
 
