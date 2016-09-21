@@ -47,7 +47,7 @@ public class FinancialProfitServiceImpl implements FinancialProfitService {
     private EntityManager entityManager;
 
     @Override
-    @Scheduled(cron = "0 10 15 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void countProfit() {
         List<FinancialBuyFlow> financialBuyFlows = financialBuyFlowRepository.findAllByStatus(FinancialStatus.RUNNING);
         for (FinancialBuyFlow financialBuyFlow : financialBuyFlows) {
