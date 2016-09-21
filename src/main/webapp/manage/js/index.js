@@ -96,6 +96,14 @@ $(function () {
             layer.msg("请选择某件商品~");
             return;
         }
+        if ($("#redeemPeriod").val() == "") {
+            layer.msg("请填写赎回周期~");
+            return;
+        }
+        if ($("#rate").val() == "") {
+            layer.msg("请填写日利率~");
+            return;
+        }
         $("#saveActivity").attr("disabled", "disabled");
         $.ajax({
             url: '../financialGoods/save',
@@ -111,7 +119,7 @@ $(function () {
                     window.location.href = result.url;
                 }
             }, error: function () {
-                layer.msg('服务器繁忙，请稍后再试');
+                layer.msg('填写字段有误~');
                 $('#saveActivity').removeAttr("disabled");
             }
         })

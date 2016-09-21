@@ -15,6 +15,11 @@
     <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.0.css" rel="stylesheet"/>
     <title>用户理财列表</title>
+    <style>
+        i {
+            font-style: normal
+        }
+    </style>
     <script th:inline="javascript">
         var rootURL = /*[[${url}]]*/'www.baidu.com';
         var pageIndex = /*[[${page}]]*/'1';
@@ -33,7 +38,12 @@
                     <tr>
                         <th colspan="12" style="color: #636e7b; padding-bottom: 5px; text-align: left;">
                             <!--<label><img src="/images/remark_icons/b1.gif" width="20" height="20" /></label>-->
-                            <span style="font-size: 20px;">用户理财列表</span>
+                            <span style="font-size: 20px;">
+                                参与总金额：<i style="color: red" th:text="'￥'+${runningMoney}">￥80000</i>&nbsp;&nbsp;
+                                处理中金额：<i style="color: red" th:text="'￥'+${doingMoney}">80000</i>&nbsp;&nbsp;
+                                已赎回金额：<i style="color: red" th:text="'￥'+${redeemedMoney}">20000</i>&nbsp;&nbsp;
+                                参与人员：<i style="color: red" th:text="${personNum}+'人'">30</i>
+                            </span>
                             <p style="float: right;">
                                 <input type="text" class="form-control input-sm mb10" id="goodsNo"
                                        runat="server" placeholder="理财编号" style="float: left;width: 77%;"/>&nbsp;
@@ -50,22 +60,22 @@
                         <td>理财编号</td>
                         <td>商品信息</td>
                         <td>商品数量</td>
-                        <td>消费金额</td>
-                        <td>购买时间</td>
+                        <td>买入金额</td>
+                        <td>买入时间</td>
                         <td>日利率</td>
                         <td>赎回周期</td>
-                        <td>理财状态</td>
+                        <td>状态</td>
                         <td>是否被抵用</td>
-                        <td>用户昵称</td>
-                        <td>用户头像</td>
+                        <td>微信昵称</td>
+                        <td>微信头像</td>
                         <td>操作</td>
                     </tr>
                     <tr th:each="flow:${list}">
                         <td th:text="${flow.no}">2016091110421110313</td>
                         <td th:text="${flow.financialTitle}">商品1</td>
                         <td th:text="${flow.amount}">1</td>
-                        <td th:text="${flow.money}">10000</td>
-                        <td th:text="${#calendars.format(flow.buyTime,'yyyy-MM-dd HH:mm')}">2014-05-31 13:57</td>
+                        <td th:text="${'￥'+flow.money}">10000</td>
+                        <td th:text="${#calendars.format(flow.buyTime,'yyyy-MM-dd HH:mm:ss')}">2014-05-31 13:57:11</td>
                         <td th:text="${flow.rate}">0.0001</td>
                         <td th:text="${flow.redeemPeriod}">100</td>
                         <td th:text="${flow.status}==0?'持有中':(${flow.status}==1?'处理中':'已收回')"></td>
