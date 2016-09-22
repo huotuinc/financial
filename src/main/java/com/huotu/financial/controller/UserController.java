@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,6 +57,8 @@ public class UserController {
     public String auth(String token, String sign, Integer code, String redirectUrl, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
+        log.debug("url:" + request.getRequestURL() + (StringUtils.isEmpty(request.getQueryString()) ? "" : "?" + request.getQueryString()));
+
         log.debug("enter auth " + token + " " + sign);
         //进行校验
         if (sign == null || !sign.equals(securityService.getSign(request))) {
@@ -63,7 +66,7 @@ public class UserController {
         }
 
         log.debug("auth sign passed");
-        log.debug(redirectUrl);
+        log.debug("redirectUrl:" + redirectUrl);
 
         if (code == 1) {
             //进行授权校验

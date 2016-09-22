@@ -44,12 +44,13 @@ public class WebInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        log.debug("url:" + request.getRequestURL() + (StringUtils.isEmpty(request.getQueryString()) ? "" : "?" + request.getQueryString()));
         Long userId = userService.getUserId(request);
         String paramUserId = request.getParameter("mainUserId");
 
         log.debug("enter interceptor");
 
-        if (env.acceptsProfiles("staging") || env.acceptsProfiles("production")) {
+        if (env.acceptsProfiles("production") || env.acceptsProfiles("staging")) {
             String customerIdStr = request.getParameter("customerId");
             if (customerIdStr == null) {
                 customerIdStr = request.getParameter("customerid");
@@ -58,6 +59,7 @@ public class WebInterceptor implements HandlerInterceptor {
             Boolean toSSO = false;
             //强制刷新用户
             String forceRefresh = "0";
+            log.debug("userId:" + (userId == null ? "" : userId.toString()) + " paramUserId:" + (paramUserId == null ? "" : paramUserId.toString()));
             //强制授权
             if (userId == null || userId == 0) {
                 toSSO = true;
