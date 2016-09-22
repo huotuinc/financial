@@ -60,4 +60,23 @@ public interface FinancialBuyFlowRepository extends JpaRepository<FinancialBuyFl
      */
     @Query("select sum(flow.money) from FinancialBuyFlow flow where flow.userId=?1 and flow.status<>?2")
     BigDecimal countFinancialMoney(Long userId, FinancialStatus status);
+
+    /**
+     * 获取某状态下理财总金额
+     *
+     * @param goodsId 商品id
+     * @param status  状态
+     * @return 总金额
+     */
+    @Query("select sum(flow.money) from FinancialBuyFlow flow where flow.goodId=?1 and flow.status=?2")
+    BigDecimal sumMoneyByGoodIdAndStatus(Long goodsId, FinancialStatus status);
+
+    /**
+     * 获取购买某理财商品的人数
+     *
+     * @param goodsId 商品id
+     * @return
+     */
+    @Query("select count(distinct flow.userId) from FinancialBuyFlow flow where flow.goodId=?1")
+    Long countByGoodsId(Long goodsId);
 }

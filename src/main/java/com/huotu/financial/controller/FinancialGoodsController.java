@@ -51,6 +51,7 @@ import java.util.Objects;
 /**
  * Created by Administrator on 2016/8/29.
  */
+@SuppressWarnings("unused")
 @Controller
 @RequestMapping(value = "/financialGoods")
 public class FinancialGoodsController {
@@ -275,6 +276,10 @@ public class FinancialGoodsController {
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
         Page<FinancialBuyFlow> pages = financialBuyFlowService.findAllByCustomerIdAndGoodIdAndNo(customerId, id, no, pageable);
         List<BuyFlowModel> list = financialBuyFlowService.changeDomainToModelList(pages.getContent());
+        BigDecimal runningMoney = financialBuyFlowRepository.sumMoneyByGoodIdAndStatus(id, FinancialStatus.RUNNING);
+        BigDecimal doingMoney = financialBuyFlowRepository.sumMoneyByGoodIdAndStatus(id, FinancialStatus.DOING);
+        BigDecimal redeemedMoney = financialBuyFlowRepository.sumMoneyByGoodIdAndStatus(id, FinancialStatus.REDEEMED);
+        Long personNum = financialBuyFlowRepository.countByGoodsId(id);
         Long count = pages.getTotalElements();
         int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
         String url = commonConfigsService.getWebUrl() +
@@ -284,6 +289,10 @@ public class FinancialGoodsController {
                 new BasicNameValuePair("total", pages.getTotalElements()),
                 new BasicNameValuePair("pageSize", pageSize),
                 new BasicNameValuePair("page", page),
+                new BasicNameValuePair("runningMoney", runningMoney == null ? 0 : runningMoney),
+                new BasicNameValuePair("doingMoney", doingMoney == null ? 0 : doingMoney),
+                new BasicNameValuePair("redeemedMoney", redeemedMoney == null ? 0 : redeemedMoney),
+                new BasicNameValuePair("personNum", personNum),
                 new BasicNameValuePair("pageCount", pageCount),
                 new BasicNameValuePair("url", rootURL + "&&page="),
                 new BasicNameValuePair("searchUrl", url + "&&no="),
