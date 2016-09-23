@@ -13,6 +13,7 @@ import com.huotu.common.base.StringHelper;
 import com.huotu.financial.common.DateHelper;
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
+import com.huotu.financial.entity.FinancialReturnRefund;
 import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
@@ -116,6 +117,13 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         model.setRate(flow.getRate());
         model.setRedeemPeriod(flow.getRedeemPeriod());
         model.setStatus(flow.getStatus().ordinal());
+        model.setLoginName(userModel.getLoginName());
+        if (null != flow.getRefund()) {
+            FinancialReturnRefund refund = flow.getRefund();
+            model.setPhone(refund.getPhone());
+            model.setLogisticalName(refund.getLogisticalName());
+            model.setLogisticalCode(refund.getLogisticalCode());
+        }
         return model;
     }
 

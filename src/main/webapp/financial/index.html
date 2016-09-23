@@ -45,7 +45,7 @@
                         $("#yesterdayIncome").text(data.yesterdayIncome);
                         $("#totalIncome").text(data.totalIncome);
                     });
-        }
+        };
 
         page.list = function () {
             $.post("/financial/financialList"
@@ -70,7 +70,7 @@
                         $("#list").append(html);
                         $("#loading").hide();
                     });
-        }
+        };
 
         page.tab = function () {
             $("#tab a").click(function () {
@@ -82,7 +82,7 @@
                 $("#list").html("");
                 page.list();
             });
-        }
+        };
 
         page.loading = function () {
             var loading = false;  //状态标记
@@ -95,27 +95,28 @@
                     loading = false;
                 }, 500);   //模拟延迟
             });
-        }
+        };
 
         page.redeem = function (status, no) {
             if (status == 1) {
                 requestRedeemData.no = no;
-                $.post("/user/redeem", requestRedeemData, function (data) {
-                    if (data.code == "1") {
-                        alert("回购成功");
-                        window.location.href = window.location.href;
-                    }
-                    else alert(data.message);
-                });
+//                $.post("/user/redeem", requestRedeemData, function (data) {
+//                    if (data.code == "1") {
+//                        alert("回购成功");
+//                        window.location.href = window.location.href;
+//                    }
+//                    else alert(data.message);
+//                });
+                window.location.href = "returnRefund?no=" + no;
             }
-        }
+        };
 
         page.init = function () {
             page.loading();
             page.total();
             page.list();
             page.tab();
-        }
+        };
 
 
         Date.prototype.format = function (fmt) { //author: meizz

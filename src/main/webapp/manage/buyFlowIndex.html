@@ -67,7 +67,7 @@
                         <td>状态</td>
                         <td>是否被抵用</td>
                         <td>微信昵称</td>
-                        <td>微信头像</td>
+                        <td>会员账号</td>
                         <td>操作</td>
                     </tr>
                     <tr th:each="flow:${list}">
@@ -81,7 +81,7 @@
                         <td th:text="${flow.status}==0?'持有中':(${flow.status}==1?'处理中':'已收回')"></td>
                         <td th:text="${flow.isUsed==true?'是':'否'}">是</td>
                         <td th:text="${flow.wxName}">test</td>
-                        <td><img th:src="${flow.wxImgURL}" style="height: 30px;width: 30px;"/></td>
+                        <td><img th:src="${flow.loginName}" style="height: 30px;width: 30px;"/></td>
                         <td>
                             <a class="btn btn-success btn-sm" href="javascript:void(0)"
                                th:href="@{/financialGoods/getPageProfit(no=${flow.no},goodsId=${flow.goodId})}">

@@ -49,6 +49,7 @@ public class CacheServiceImpl implements CacheService {
         model.setUserId(user.getId());
         model.setWxName(user.getWxNickName());
         model.setWxImgURL(user.getWeixinImageUrl());
+        model.setLoginName(user.getLoginName());
         userMap.put(userId, model);
         return model;
     }

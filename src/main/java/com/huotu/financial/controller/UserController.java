@@ -1,7 +1,17 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.financial.controller;
 
 import com.huotu.common.base.HttpHelper;
 import com.huotu.financial.entity.FinancialBuyFlow;
+import com.huotu.financial.entity.FinancialReturnRefund;
 import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
 import com.huotu.financial.exceptions.NoRedeemStatusException;
@@ -28,6 +38,7 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Administrator on 2016/8/28.
@@ -100,13 +111,23 @@ public class UserController {
 
     @RequestMapping(value = "/redeem", method = RequestMethod.POST)
     @ResponseBody
-    public ResultModel redeem(@RequestParam(value = "no") String no) {
+    public ResultModel redeem(@RequestParam(value = "no") String no,
+                              @RequestParam String phone,
+                              @RequestParam(required = false) String logisticalName,
+                              @RequestParam(required = false) String logisticalCode) {
         ResultModel resultModel = new ResultModel();
 
         FinancialBuyFlow financialBuyFlow = financialBuyFlowRepository.findOne(no);
         if (financialBuyFlow != null) {
 
             try {
+                FinancialReturnRefund refund = financialBuyFlow.getRefund();
+                if (Objects.isNull(refund))
+                    refund = new FinancialReturnRefund();
+                refund.setPhone(phone);
+                if (null != logisticalName) refund.setLogisticalName(logisticalName);
+                if (null != logisticalCode) refund.setLogisticalCode(logisticalCode);
+                financialBuyFlow.setRefund(refund);
                 financialBuyFlowService.handleRedeem(financialBuyFlow);
             } catch (NoFindRedeemAmountException e) {
                 resultModel.setCode("60001");

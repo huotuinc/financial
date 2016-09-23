@@ -114,4 +114,7 @@ public class FinancialBuyFlow {
      */
     @Column(length = 100)
     private String toOuterOrderNo;
+
+    @OneToOne
+    private FinancialReturnRefund refund;
 }
