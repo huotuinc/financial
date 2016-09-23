@@ -25,12 +25,12 @@ public class CommonConfigsServiceImpl implements CommonConfigsService {
 
     @Override
     public String getWebUrl() {
-        return env.getProperty("financial.weburl", "http://192.168.1.57:8080");
+        return env.getProperty("financial.weburl", "http://finance.fanfancat.com:8088");
     }
 
     @Override
     public String getAuthWebUrl() {
-        return env.getProperty("auth.web.url", "http://test.auth.huobanplus.com:8081");
+        return env.getProperty("auth.web.url", "http://sso.51flashmall.com:8091");
     }
 
     @Override

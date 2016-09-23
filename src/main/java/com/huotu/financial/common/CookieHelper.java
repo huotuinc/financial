@@ -20,6 +20,7 @@ public class CookieHelper {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(expiry);
         cookie.setDomain(domain);
+        cookie.setPath("/");
         response.addCookie(cookie);
     }
 

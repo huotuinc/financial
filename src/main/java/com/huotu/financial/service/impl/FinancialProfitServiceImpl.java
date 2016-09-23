@@ -58,7 +58,7 @@ public class FinancialProfitServiceImpl implements FinancialProfitService {
     @Override
     @Scheduled(cron = "0 0 0 * * *")
     public void countProfit() {
-        List<FinancialBuyFlow> financialBuyFlows = financialBuyFlowRepository.findAllByStatus(FinancialStatus.RUNNING);
+        List<FinancialBuyFlow> financialBuyFlows = financialBuyFlowRepository.findAllCanProfit(FinancialStatus.REDEEMED);
         for (FinancialBuyFlow financialBuyFlow : financialBuyFlows) {
             doOneBuy(financialBuyFlow);
         }

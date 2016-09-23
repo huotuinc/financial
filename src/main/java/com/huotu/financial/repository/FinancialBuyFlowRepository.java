@@ -30,6 +30,9 @@ import java.util.List;
 public interface FinancialBuyFlowRepository extends JpaRepository<FinancialBuyFlow, String>, JpaSpecificationExecutor<FinancialBuyFlow> {
     List<FinancialBuyFlow> findAllByStatus(FinancialStatus status);
 
+    @Query("select flow from FinancialBuyFlow flow where flow.status<>?1")
+    List<FinancialBuyFlow> findAllCanProfit(FinancialStatus status);
+
 //    List<FinancialBuyFlow> findAllByUserIdAndIsUsedAndBuyTimeGreaterThanAndMoneyGreaterThanEqual(Long userId, Boolean isUsed, Date buyTime, BigDecimal money);
 //
 //    List<FinancialBuyFlow> findAllByBelongOneAndIsUsedAndMoneyGreaterThanEqual(Long belongOne, Boolean isUsed, BigDecimal money);

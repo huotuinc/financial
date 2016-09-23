@@ -80,4 +80,9 @@ public class FinancialController {
         Long userId = PublicParameterHolder.get().getUserId();
         return financialProfitService.profitList(userId, lastId);
     }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String test() {
+        return "/financial/test";
+    }
 }

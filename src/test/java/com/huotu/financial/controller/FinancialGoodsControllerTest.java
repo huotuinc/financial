@@ -13,6 +13,7 @@ import com.huotu.financial.WebTest;
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
 import com.huotu.financial.repository.FinancialGoodsRepository;
+import com.huotu.financial.service.UserService;
 import com.huotu.huobanplus.common.entity.Goods;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,5 +110,18 @@ public class FinancialGoodsControllerTest extends WebTest {
                 .andExpect(status().isOk()).andReturn().getModelAndView();
         Map<String, Object> newMap = newView.getModel();
         assertEquals("", Long.parseLong(String.valueOf(newMap.get("total"))), list.size());
+    }
+
+    @Autowired
+    private UserService userService;
+    @Test
+    public  void  t() throws Exception {
+//        String x = userService.testEncrypt();
+//        String y = userService.testEncrypt();
+//        System.out.println(x);
+//        System.out.println(y);
+//
+//        System.out.println(userService.testD(x));
+//        System.out.println(userService.testD(y));
     }
 }

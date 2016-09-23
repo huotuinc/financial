@@ -17,11 +17,10 @@ import java.util.UUID;
 public class AdminController {
 
     @RequestMapping("/setCookie")
-    @ResponseBody
     public String setCookie(HttpServletRequest request, HttpServletResponse response) {
         String x = UUID.randomUUID().toString();
         CookieHelper.set(response, "a", x, request.getServerName(), 60 * 60 * 24 * 365);
-        return "set " + x + " ok";
+        return "redirect:http://finance.fanfancat.com:8088/test/getCookie";
     }
 
     @RequestMapping("/getCookie")
