@@ -102,6 +102,14 @@
             layer.msg("手机号码格式错误");
             return;
         }
+        if ($("#logisticalName").val() == "") {
+            layer.msg("物流公司不能为空");
+            return;
+        }
+        if ($("#logisticalCode").val() == "") {
+            layer.msg("快递单号不能为空");
+            return;
+        }
 
         requestRedeemData.no = $("#no").val();
         requestRedeemData.phone = $("#phone").val();
