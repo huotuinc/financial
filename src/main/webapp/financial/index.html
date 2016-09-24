@@ -62,8 +62,20 @@
                             template = template.replace("{amount}", row.amount).replace("{amount}", row.amount);
                             template = template.replace("{moeny}", row.moeny);
                             template = template.replace("{date}", new Date(row.date).format("yyyy-MM-dd hh:mm:ss"));
-                            template = template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
+                            if (row.status == 1) {
+                                template = template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
+                                template = template.replace("{status_title}", "赎回");
+                            } else {
+                                if (row.ownerStatus != 0) {
+                                    template = template.replace("{status}", "kesuhui");
+                                    template = template.replace("{status_title}", "查看");
+                                } else {
+                                    template = template.replace("{status}", "bukesuhui");
+                                    template = template.replace("{status_title}", "赎回");
+                                }
+                            }
                             template = template.replace("{status_value}", row.status);
+                            template = template.replace("{ownerStatus}", row.ownerStatus);
                             html += template;
                             if (i == data.length - 1) requestData.lastTime = row.date;
                         }
@@ -97,8 +109,8 @@
             });
         };
 
-        page.redeem = function (status, no) {
-            if (status == 1) {
+        page.redeem = function (status, no, ownerStatus) {
+            if (status == 1 || ownerStatus != 0) {
                 requestRedeemData.no = no;
 //                $.post("/user/redeem", requestRedeemData, function (data) {
 //                    if (data.code == "1") {
@@ -202,7 +214,9 @@
                         <div class="weui_cell_bd weui_cell_primary">
                             <p style="font-size:12px">编号{no}</p>
                         </div>
-                        <div class="weui_cell_ft jj {status}" onclick="page.redeem({status_value},'{no}')">赎回</div>
+                        <div class="weui_cell_ft jj {status}"
+                             onclick="page.redeem({status_value},'{no}',{ownerStatus})">{status_title}
+                        </div>
                     </a>
                 </div>
                 <div class="weui_panel_bd fa">

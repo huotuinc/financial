@@ -201,6 +201,12 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
                 viewBuyListModel.setStatus(1);
             else
                 viewBuyListModel.setStatus(0);
+            if (financialBuyFlow.getStatus().equals(FinancialStatus.RUNNING))
+                viewBuyListModel.setOwnerStatus(0);
+            else if (financialBuyFlow.getStatus().equals(FinancialStatus.DOING))
+                viewBuyListModel.setOwnerStatus(1);
+            else if (financialBuyFlow.getStatus().equals(FinancialStatus.REDEEMED))
+                viewBuyListModel.setOwnerStatus(2);
             viewBuyListModel.setDate(financialBuyFlow.getBuyTime());
             viewBuyListModels.add(viewBuyListModel);
         }

@@ -11,7 +11,6 @@ package com.huotu.financial.controller;
 
 import com.huotu.financial.common.PublicParameterHolder;
 import com.huotu.financial.entity.FinancialBuyFlow;
-import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.model.ViewBuyListModel;
 import com.huotu.financial.model.ViewFinancialTotalModel;
 import com.huotu.financial.model.ViewProfitListModel;
@@ -114,7 +113,7 @@ public class FinancialController {
 //        model
         model.addAttribute("flow", flow);
         model.addAttribute("defaultReturnAddress", config.getDefaultReturnAddress());
-        model.addAttribute("isReturning", flow.getStatus().equals(FinancialStatus.RUNNING) ? false : true);
+        model.addAttribute("status", flow.getStatus().ordinal());
         return "/financial/returnRefund";
     }
 }

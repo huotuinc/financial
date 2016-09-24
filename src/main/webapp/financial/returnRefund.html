@@ -40,7 +40,7 @@
         </div>
         <div class="weui_cell">
             <div class="weui_cell_hd">
-                <label class="weui_label">物流名字</label>
+                <label class="weui_label">物流公司</label>
             </div>
             <div class="weui_cell_bd weui_cell_primary">
                 <input class="weui_input" type="tel" id="logisticalName">
@@ -48,7 +48,7 @@
         </div>
         <div class="weui_cell">
             <div class="weui_cell_hd">
-                <label class="weui_label">物流编号</label>
+                <label class="weui_label">快递单号</label>
             </div>
             <div class="weui_cell_bd weui_cell_primary">
                 <input class="weui_input" type="tel" id="logisticalCode">
@@ -63,14 +63,33 @@
     </div>
 </div>
 
-<p style="margin:20px 10px 10px 10px"><a href="javascript:;" class="weui_btn weui_btn_primary" onclick="redeem()">提交</a>
+<p style="margin:20px 10px 10px 10px" id="submitButton">
+    <a href="javascript:;" class="weui_btn weui_btn_primary" onclick="redeem()">提交</a>
 </p>
 <p style="height:60px; clear:both"></p>
 </body>
-</html>
 <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/jquery-weui.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/layer/2.4/layer.js"></script>
+<script th:if="${flow!=null}" th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        var status = /*[[${status}]]*/0;
+        if (status != 0) {
+            $("#submitButton").hide();
+        } else {
+            $("#submitButton").show();
+        }
+        var returnRefund = /*[[${flow.refund}]]*/null;
+        if (null != returnRefund) {
+            $("#phone").val(returnRefund.phone);
+            $("#logisticalName").val(returnRefund.logisticalName);
+            $("#logisticalCode").val(returnRefund.logisticalCode);
+        }
+    });
+    /*]]>*/
+</script>
+</html>
 <script>
     var requestRedeemData = {};
     function redeem() {
