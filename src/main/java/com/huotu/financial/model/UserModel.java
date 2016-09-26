@@ -21,4 +21,5 @@ public class UserModel {
     Long userId;
     String wxName;
     String wxImgURL;
+    String loginName;
 }

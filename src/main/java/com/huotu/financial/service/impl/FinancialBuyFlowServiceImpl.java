@@ -13,6 +13,7 @@ import com.huotu.common.base.StringHelper;
 import com.huotu.financial.common.DateHelper;
 import com.huotu.financial.entity.FinancialBuyFlow;
 import com.huotu.financial.entity.FinancialGoods;
+import com.huotu.financial.entity.FinancialReturnRefund;
 import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.exceptions.NoFindRedeemAmountException;
 import com.huotu.financial.exceptions.NoReachRedeemPeriodException;
@@ -116,6 +117,13 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         model.setRate(flow.getRate());
         model.setRedeemPeriod(flow.getRedeemPeriod());
         model.setStatus(flow.getStatus().ordinal());
+        model.setLoginName(userModel.getLoginName());
+        if (null != flow.getRefund()) {
+            FinancialReturnRefund refund = flow.getRefund();
+            model.setPhone(refund.getPhone());
+            model.setLogisticalName(refund.getLogisticalName());
+            model.setLogisticalCode(refund.getLogisticalCode());
+        }
         return model;
     }
 
@@ -193,6 +201,12 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
                 viewBuyListModel.setStatus(1);
             else
                 viewBuyListModel.setStatus(0);
+            if (financialBuyFlow.getStatus().equals(FinancialStatus.RUNNING))
+                viewBuyListModel.setOwnerStatus(0);
+            else if (financialBuyFlow.getStatus().equals(FinancialStatus.DOING))
+                viewBuyListModel.setOwnerStatus(1);
+            else if (financialBuyFlow.getStatus().equals(FinancialStatus.REDEEMED))
+                viewBuyListModel.setOwnerStatus(2);
             viewBuyListModel.setDate(financialBuyFlow.getBuyTime());
             viewBuyListModels.add(viewBuyListModel);
         }

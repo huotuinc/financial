@@ -60,11 +60,14 @@
                                     <td>商品信息</td>
                                     <td>商品数量</td>
                                     <td>消费金额</td>
-                                    <td>购买时间</td>
-                                    <td>日利率</td>
-                                    <td>赎回周期</td>
+                                    <!--<td>购买时间</td>-->
+                                    <!--<td>日利率</td>-->
+                                    <!--<td>赎回周期</td>-->
                                     <td>用户昵称</td>
-                                    <td>用户头像</td>
+                                    <td>会员账号</td>
+                                    <td>手机号</td>
+                                    <td>物流公司</td>
+                                    <td>快递单号</td>
                                     <td>操作</td>
                                 </tr>
                                 </thead>
@@ -74,13 +77,16 @@
                                     <td th:text="${flow.financialTitle}">商品1</td>
                                     <td th:text="${flow.amount}">1</td>
                                     <td th:text="${flow.money}">10000</td>
-                                    <td th:text="${#calendars.format(flow.buyTime,'yyyy-MM-dd HH:mm')}">2014-05-31
-                                        13:57
-                                    </td>
-                                    <td th:text="${flow.rate}">0.0001</td>
-                                    <td th:text="${flow.redeemPeriod}">100</td>
+                                    <!--<td th:text="${#calendars.format(flow.buyTime,'yyyy-MM-dd HH:mm')}">2014-05-31-->
+                                    <!--13:57-->
+                                    <!--</td>-->
+                                    <!--<td th:text="${flow.rate}">0.0001</td>-->
+                                    <!--<td th:text="${flow.redeemPeriod}">100</td>-->
                                     <td th:text="${flow.wxName}">test</td>
-                                    <td><img th:src="${flow.wxImgURL}" style="height: 30px;width: 30px;"/></td>
+                                    <td th:text="${flow.loginName}"></td>
+                                    <td th:text="${flow.phone}"></td>
+                                    <td th:text="${flow.logisticalName}"></td>
+                                    <td th:text="${flow.logisticalCode}"></td>
                                     <td>
                                         <button style="padding: 0px 5px;" title="" data-placement="top"
                                                 onclick="redemption(this)" th:attr="flowNo=${flow.no}"
@@ -128,27 +134,33 @@
     });
 
     function redemption(obj) {
-        var loading = layer.load(1, {
-            shade: [0.1, '#fff'] //0.1透明度的白色背景
-        });
-        $.ajax({
-            url: '../financialGoods/updateFlowStatus',
-            type: 'POST',
-            data: {no: $(obj).attr("flowNo")},
-            success: function (result) {
-                layer.close(loading);
-                if (result.success) {
-                    layer.msg("赎回成功");
-                    $(obj).parent().parent().empty();
-                } else {
-                    layer.msg(result.msg);
+        layer.confirm('请检查用户信息，确认是否赎回', {
+            btn: ['是', '否'] //按钮
+        }, function () {
+            var loading = layer.load(1, {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+            $.ajax({
+                url: '../financialGoods/updateFlowStatus',
+                type: 'POST',
+                data: {no: $(obj).attr("flowNo")},
+                success: function (result) {
+                    layer.close(loading);
+                    if (result.success) {
+                        layer.msg("赎回成功");
+                        $(obj).parent().parent().empty();
+                    } else {
+                        layer.msg(result.msg);
+                    }
+                }, error: function () {
+                    layer.close(loading);
+                    layer.msg('服务器繁忙，请稍后再试');
                 }
-            }, error: function () {
-                layer.close(loading);
-                layer.msg('服务器繁忙，请稍后再试');
-            }
 
-        })
+            })
+        }, function () {
+        });
+
     }
 
     //    var page = {};

@@ -1,9 +1,16 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.financial.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -26,6 +33,11 @@ public class ViewBuyListModel {
      * 0 不可赎回 1 可赎回
      */
     private Integer status;
+
+    /**
+     * 对应{@link com.huotu.financial.enums.FinancialStatus}
+     */
+    private Integer ownerStatus;
 
 }
 

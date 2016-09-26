@@ -46,7 +46,7 @@
                         $("#yesterdayIncome").text(data.yesterdayIncome);
                         $("#totalIncome").text(data.totalIncome);
                     });
-        }
+        };
 
         page.list = function () {
             $.post("/financial/financialList"
@@ -63,15 +63,27 @@
                             template = template.replace("{amount}", row.amount).replace("{amount}", row.amount);
                             template = template.replace("{moeny}", row.moeny);
                             template = template.replace("{date}", new Date(row.date).format("yyyy-MM-dd hh:mm:ss"));
-                            template = template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
+                            if (row.status == 1) {
+                                template = template.replace("{status}", row.status == 1 ? "kesuhui" : "bukesuhui");
+                                template = template.replace("{status_title}", "赎回");
+                            } else {
+                                if (row.ownerStatus != 0) {
+                                    template = template.replace("{status}", "kesuhui");
+                                    template = template.replace("{status_title}", "查看");
+                                } else {
+                                    template = template.replace("{status}", "bukesuhui");
+                                    template = template.replace("{status_title}", "赎回");
+                                }
+                            }
                             template = template.replace("{status_value}", row.status);
+                            template = template.replace("{ownerStatus}", row.ownerStatus);
                             html += template;
                             if (i == data.length - 1) requestData.lastTime = row.date;
                         }
                         $("#list").append(html);
                         $("#loading").hide();
                     });
-        }
+        };
 
         page.tab = function () {
             $("#tab a").click(function () {
@@ -83,7 +95,7 @@
                 $("#list").html("");
                 page.list();
             });
-        }
+        };
 
         page.loading = function () {
             var loading = false;  //状态标记
@@ -96,20 +108,21 @@
                     loading = false;
                 }, 500);   //模拟延迟
             });
-        }
+        };
 
-        page.redeem = function (status, no) {
-            if (status == 1) {
+        page.redeem = function (status, no, ownerStatus) {
+            if (status == 1 || ownerStatus != 0) {
                 requestRedeemData.no = no;
-                $.post("/user/redeem", requestRedeemData, function (data) {
-                    if (data.code == "1") {
-                        alert("回购成功");
-                        window.location.href = window.location.href;
-                    }
-                    else alert(data.message);
-                });
+//                $.post("/user/redeem", requestRedeemData, function (data) {
+//                    if (data.code == "1") {
+//                        alert("回购成功");
+//                        window.location.href = window.location.href;
+//                    }
+//                    else alert(data.message);
+//                });
+                window.location.href = "returnRefund?no=" + no;
             }
-        }
+        };
 
         page.init = function () {
             $("#countProfit a").attr("href", "/financial/profit?customerId=" + customerId);
@@ -117,7 +130,7 @@
             page.total();
             page.list();
             page.tab();
-        }
+        };
 
 
         Date.prototype.format = function (fmt) { //author: meizz
@@ -222,7 +235,9 @@
                         <div class="weui_cell_bd weui_cell_primary">
                             <p style="font-size:12px">编号{no}</p>
                         </div>
-                        <div class="weui_cell_ft jj {status}" onclick="page.redeem({status_value},'{no}')">赎回</div>
+                        <div class="weui_cell_ft jj {status}"
+                             onclick="page.redeem({status_value},'{no}',{ownerStatus})">{status_title}
+                        </div>
                     </a>
                 </div>
                 <div class="weui_panel_bd fa">

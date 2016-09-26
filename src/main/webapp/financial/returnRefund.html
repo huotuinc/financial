@@ -1,0 +1,127 @@
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  -->
+
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport"
+          content="width=device-width,minimum-scale=1,user-scalable=no,maximum-scale=1,initial-scale=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css"
+          href="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/jquery-weui.min.css">
+    <link rel="stylesheet" type="text/css" href="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/weui.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/weui.min-xian-diy.css">
+    <title></title>
+</head>
+<body class="ddbg">
+<div>
+    <input type="hidden" id="no" th:value="${flow.no}"/>
+    <div class="weui_cells_title" style="font-size:12px">
+        填写信息
+    </div>
+    <div class="weui_cells weui_cells_form" style="font-size: 14px;">
+        <div class="weui_cell">
+            <div class="weui_cell_hd">
+                <label class="weui_label">手机号</label>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="tel" placeholder="11位号码" id="phone">
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd">
+                <label class="weui_label">物流公司</label>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="tel" id="logisticalName">
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd">
+                <label class="weui_label">快递单号</label>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="tel" id="logisticalCode">
+            </div>
+        </div>
+
+    </div>
+    <div class="weui_cells_title" style="font-size:12px;line-height: 15px;">
+        请将理财产品寄回至：<span style="color:red; text-decoration:underline" th:text="${defaultReturnAddress}">
+        西安市仙林区江南大道45号威固大厦27层</span>
+        ，商家将在收到理财产品后的3个工作日内将本金退回至您的账户。
+    </div>
+</div>
+
+<p style="margin:20px 10px 10px 10px" id="submitButton">
+    <a href="javascript:;" class="weui_btn weui_btn_primary" onclick="redeem()">提交</a>
+</p>
+<p style="height:60px; clear:both"></p>
+</body>
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/jquery-weui.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/layer/2.4/layer.js"></script>
+<script th:if="${flow!=null}" th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        var status = /*[[${status}]]*/0;
+        if (status != 0) {
+            $("#submitButton").hide();
+        } else {
+            $("#submitButton").show();
+        }
+        var returnRefund = /*[[${flow.refund}]]*/null;
+        if (null != returnRefund) {
+            $("#phone").val(returnRefund.phone);
+            $("#logisticalName").val(returnRefund.logisticalName);
+            $("#logisticalCode").val(returnRefund.logisticalCode);
+        }
+    });
+    /*]]>*/
+</script>
+</html>
+<script>
+    var requestRedeemData = {};
+    function redeem() {
+        if ($("#phone").val() == "") {
+            layer.msg("手机号码不能为空");
+            return;
+        }
+        var reg = /^0?1[3|4|5|8][0-9]\d{8}$/;
+        if (!reg.test($("#phone").val())) {
+            layer.msg("手机号码格式错误");
+            return;
+        }
+        if ($("#logisticalName").val() == "") {
+            layer.msg("物流公司不能为空");
+            return;
+        }
+        if ($("#logisticalCode").val() == "") {
+            layer.msg("快递单号不能为空");
+            return;
+        }
+
+        requestRedeemData.no = $("#no").val();
+        requestRedeemData.phone = $("#phone").val();
+        requestRedeemData.logisticalName = $("#logisticalName").val();
+        requestRedeemData.logisticalCode = $("#logisticalCode").val();
+        $.post("../user/redeem", requestRedeemData, function (data) {
+            if (data.code == "1") {
+                alert("回购成功");
+                window.location.href = '../financial/index';
+            }
+            else alert(data.message);
+        });
+
+    }
+</script>

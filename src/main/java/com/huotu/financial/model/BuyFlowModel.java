@@ -39,6 +39,8 @@ public class BuyFlowModel {
      */
     private String wxImgURL;
 
+    private String loginName;
+
     /**
      * 商品Id
      */
@@ -101,4 +103,10 @@ public class BuyFlowModel {
      * 首次购买设置此值
      */
     private Long belongOne;
+
+    private String phone;
+
+    private String logisticalName;
+
+    private String logisticalCode;
 }
