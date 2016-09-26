@@ -66,6 +66,8 @@
                                     <td>用户昵称</td>
                                     <td>会员账号</td>
                                     <td>手机号</td>
+                                    <td>物流公司</td>
+                                    <td>快递单号</td>
                                     <td>操作</td>
                                 </tr>
                                 </thead>
@@ -82,7 +84,9 @@
                                     <!--<td th:text="${flow.redeemPeriod}">100</td>-->
                                     <td th:text="${flow.wxName}">test</td>
                                     <td th:text="${flow.loginName}"></td>
-                                    <td th:text="${flow.refund.phone}"></td>
+                                    <td th:text="${flow.phone}"></td>
+                                    <td th:text="${flow.logisticalName}"></td>
+                                    <td th:text="${flow.logisticalCode}"></td>
                                     <td>
                                         <button style="padding: 0px 5px;" title="" data-placement="top"
                                                 onclick="redemption(this)" th:attr="flowNo=${flow.no}"
