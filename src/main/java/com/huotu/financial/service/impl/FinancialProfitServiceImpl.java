@@ -56,7 +56,7 @@ public class FinancialProfitServiceImpl implements FinancialProfitService {
     private EntityManager entityManager;
 
     @Override
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0/1 * * *")
     public void countProfit() {
         List<FinancialBuyFlow> financialBuyFlows = financialBuyFlowRepository.findAllCanProfit(FinancialStatus.REDEEMED);
         for (FinancialBuyFlow financialBuyFlow : financialBuyFlows) {
@@ -66,7 +66,7 @@ public class FinancialProfitServiceImpl implements FinancialProfitService {
 
     @Transactional
     private void doOneBuy(FinancialBuyFlow financialBuyFlow) {
-        BigDecimal profit = financialBuyFlow.getMoney().multiply(financialBuyFlow.getRate().divide(new BigDecimal(1000)));
+        BigDecimal profit = financialBuyFlow.getMoney().multiply(financialBuyFlow.getRate().divide(new BigDecimal(10000)));
         Date date = new Date();
         User user = userRepository.findOne(financialBuyFlow.getUserId());
 

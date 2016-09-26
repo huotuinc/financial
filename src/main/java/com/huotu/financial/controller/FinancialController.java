@@ -107,13 +107,14 @@ public class FinancialController {
     }
 
     @RequestMapping(value = "/returnRefund")
-    public String returnRefund(@RequestParam String no, Model model) {
+    public String returnRefund(@RequestParam String no, @RequestParam Long customerId, Model model) {
         FinancialBuyFlow flow = financialBuyFlowRepository.findOne(no);
         MerchantConfig config = merchantConfigRepository.findByMerchantId(flow.getCustomerId());
 //        model
         model.addAttribute("flow", flow);
         model.addAttribute("defaultReturnAddress", config.getDefaultReturnAddress());
         model.addAttribute("status", flow.getStatus().ordinal());
+        model.addAttribute("customerId", customerId);
         return "/financial/returnRefund";
     }
 }

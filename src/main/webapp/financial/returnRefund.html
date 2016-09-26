@@ -26,6 +26,7 @@
 <body class="ddbg">
 <div>
     <input type="hidden" id="no" th:value="${flow.no}"/>
+    <input type="hidden" id="customerId" th:value="${customerId}"/>
     <div class="weui_cells_title" style="font-size:12px">
         填写信息
     </div>
@@ -115,6 +116,7 @@
         requestRedeemData.phone = $("#phone").val();
         requestRedeemData.logisticalName = $("#logisticalName").val();
         requestRedeemData.logisticalCode = $("#logisticalCode").val();
+        requestRedeemData.customerId = $("#customerId").val();
         $.post("../user/redeem", requestRedeemData, function (data) {
             if (data.code == "1") {
                 alert("回购成功");
