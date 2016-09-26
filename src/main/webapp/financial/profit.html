@@ -25,7 +25,8 @@
     <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
     <script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/jquery-weui.min.js"></script>
     <script type="text/javascript">
-        var requestData = {lastId: 0};
+        var customerId = getQueryString("customerId");
+        var requestData = {customerId: customerId, lastId: 0};
 
         $(function () {
             page.init();
@@ -91,6 +92,25 @@
             for (var k in o)
                 if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             return fmt;
+        }
+
+        function getQueryString(strName) {
+            // /<summary>
+            // /获取url 参数
+            // /</summary>
+            var strHref = window.document.location.href;
+            var intPos = strHref.indexOf("?");
+            var strRight = strHref.substr(intPos + 1);
+            var arrTmp = strRight.split("&");
+            for (var i = 0; i < arrTmp.length; i++) {
+                var arrTemp = arrTmp[i].split("=");
+                if (arrTemp[0].toUpperCase() == strName.toUpperCase())
+                    return arrTemp[1];
+            }
+            if (arguments.length == 1)
+                return "";
+            if (arguments.length == 2)
+                return arguments[1];
         }
     </script>
 </head>
