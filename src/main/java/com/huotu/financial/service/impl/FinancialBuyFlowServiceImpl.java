@@ -237,12 +237,15 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
     }
 
     @Override
-    public Page<FinancialBuyFlow> findAllByCustomerIdAndGoodIdAndNo(Long customerId, Long goodId, String no, Pageable pageable) throws IOException {
+    public Page<FinancialBuyFlow> findAllByCustomerIdAndGoodIdAndNoAndUserId(Long customerId, Long goodId, String no,
+                                                                             Long userId, Pageable pageable) throws IOException {
         return financialBuyFlowRepository.findAll((root, query, cb) -> {
             Predicate predicate = cb.and(cb.equal(root.get("customerId").as(Long.class), customerId),
                     cb.equal(root.get("goodId").as(Long.class), goodId));
             if (!StringUtils.isEmpty(no))
                 predicate = cb.and(predicate, cb.like(root.get("no").as(String.class), "%" + no + "%"));
+            if (null != userId)
+                predicate = cb.and(predicate, cb.like(root.get("userId").as(String.class), "%" + no + "%"));
             return predicate;
         }, pageable);
     }

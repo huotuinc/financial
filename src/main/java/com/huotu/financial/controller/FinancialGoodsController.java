@@ -26,6 +26,7 @@ import com.huotu.financial.util.RestUtil;
 import com.huotu.financial.util.support.BasicNameValuePair;
 import com.huotu.huobanplus.common.dataService.GoodsService;
 import com.huotu.huobanplus.common.entity.Goods;
+import com.huotu.huobanplus.common.repository.UserRepository;
 import com.huotu.huobanplus.sdk.mall.annotation.CustomerId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -72,6 +73,8 @@ public class FinancialGoodsController {
     private GoodsService goodsService;
     @Autowired
     private FinancialBuyFlowRepository financialBuyFlowRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private FinancialProfitRepository financialProfitRepository;
     //    @Autowired
@@ -268,13 +271,19 @@ public class FinancialGoodsController {
     @RequestMapping(value = "/buyFlowIndex", method = RequestMethod.GET)
     public ModelAndView buyFlowIndex(@CustomerId Long customerId, @RequestParam Long id,
                                      @RequestParam(required = false) String no,
+                                     @RequestParam(required = false) String loginName,
                                      @RequestParam(required = false) Integer page,
                                      @RequestParam(required = false) Integer pageSize) throws IOException, UserException {
         Sort sort = new Sort(Sort.Direction.DESC, "buyTime");
         if (Objects.isNull(page)) page = list_page;
         if (Objects.isNull(pageSize)) pageSize = list_pageSize;
+//        User user = loginName != null ? userRepository.findByLoginName(loginName) : null;
         Pageable pageable = new PageRequest(page - 1, pageSize, sort);
-        Page<FinancialBuyFlow> pages = financialBuyFlowService.findAllByCustomerIdAndGoodIdAndNo(customerId, id, no, pageable);
+        Page<FinancialBuyFlow> pages = financialBuyFlowService.findAllByCustomerIdAndGoodIdAndNoAndUserId(customerId, id, no, null, pageable);
+//        if (null == user)
+//            pages = financialBuyFlowService.findAllByCustomerIdAndGoodIdAndNoAndUserId(customerId, id, no, null, pageable);
+//        else
+//            pages = financialBuyFlowService.findAllByCustomerIdAndGoodIdAndNoAndUserId(customerId, id, no, user.getId(), pageable);
         List<BuyFlowModel> list = financialBuyFlowService.changeDomainToModelList(pages.getContent());
         BigDecimal runningMoney = financialBuyFlowRepository.sumMoneyByGoodIdAndStatus(id, FinancialStatus.RUNNING);
         BigDecimal doingMoney = financialBuyFlowRepository.sumMoneyByGoodIdAndStatus(id, FinancialStatus.DOING);
@@ -294,6 +303,7 @@ public class FinancialGoodsController {
                 new BasicNameValuePair("redeemedMoney", redeemedMoney == null ? 0 : redeemedMoney),
                 new BasicNameValuePair("personNum", personNum),
                 new BasicNameValuePair("pageCount", pageCount),
+                new BasicNameValuePair("dot", "&"),
                 new BasicNameValuePair("url", rootURL + "&&page="),
                 new BasicNameValuePair("searchUrl", url + "&&no="),
                 new BasicNameValuePair("list", list));

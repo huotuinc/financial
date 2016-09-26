@@ -25,6 +25,7 @@
         var pageIndex = /*[[${page}]]*/'1';
         var totalPage = /*[[${pageSize}]]*/'20';
         var searchURL = /*[[${searchUrl}]]*/'';
+        //        var dot = /*[[${dot}]]*/'';
     </script>
 </head>
 <body class="gray-bg">
@@ -46,11 +47,18 @@
                             </span>
                             <p style="float: right;">
                                 <input type="text" class="form-control input-sm mb10" id="goodsNo"
-                                       runat="server" placeholder="理财编号" style="float: left;width: 77%;"/>&nbsp;
+                                       runat="server" placeholder="理财编号" style="float: left;width: 55%;"/>&nbsp;
+                                <!--<input type="text" class="form-control input-sm mb10" id="loginName"-->
+                                <!--runat="server" placeholder="会员账号" style="float: left;width: 35%;"/>&nbsp;-->
+                                <a th:href="@{/financialGoods/index}" href="javascript:void(0);"
+                                   class="btn btn-success btn-sm" style="float: right">
+                                    返回
+                                </a>&nbsp;
                                 <button id="flowSearch"
-                                        class="btn btn-success btn-sm" style="float: right">
+                                        class="btn btn-success btn-sm" style="float: right;margin-right: 2px;">
                                     <i class="fa fa-search"></i>&nbsp;搜索
                                 </button>
+
                             </p>
                         </th>
                     </tr>
@@ -117,6 +125,7 @@
 
         $("#flowSearch").click(function () {
             window.location.href = searchURL + $("#goodsNo").val();
+//                    + dot + "loginName=" + $("#loginName").val();
         })
     });
 </script>

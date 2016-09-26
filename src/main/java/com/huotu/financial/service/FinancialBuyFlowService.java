@@ -89,11 +89,13 @@ public interface FinancialBuyFlowService {
      * @param customerId 商户id
      * @param goodId     商品id
      * @param no         理财编号
+     * @param userId     用户id
      * @param pageable   分页
      * @return 用户理财列表
      * @throws IOException
      */
-    Page<FinancialBuyFlow> findAllByCustomerIdAndGoodIdAndNo(Long customerId, Long goodId, String no, Pageable pageable) throws IOException;
+    Page<FinancialBuyFlow> findAllByCustomerIdAndGoodIdAndNoAndUserId(Long customerId, Long goodId, String no,
+                                                                      Long userId, Pageable pageable) throws IOException;
 
     /**
      * 根据条件查询用户理财列表

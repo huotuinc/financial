@@ -75,7 +75,7 @@ public class FinancialGoodsServiceImpl implements FinancialGoodsService {
     private MallAdvanceLogs save(User user, BigDecimal money, FinancialBuyFlow flow) throws IOException {
         MallAdvanceLogs mallAdvanceLogs = new MallAdvanceLogs();
         mallAdvanceLogs.setMemberId(user.getId());
-        mallAdvanceLogs.setMoney(money);
+        mallAdvanceLogs.setMoney(money.doubleValue());
         mallAdvanceLogs.setMessage("");
         mallAdvanceLogs.setMTime(new Date());
         mallAdvanceLogs.setPaymentId("");
