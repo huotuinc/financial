@@ -321,7 +321,7 @@ public class FinancialGoodsController {
         Long count = pages.getTotalElements();
         int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
         String url = commonConfigsService.getWebUrl() +
-                "/financialGoods/getPageProfit?no=" + no;
+                "/financialGoods/getPageProfit?no=" + no + "&goodsId=" + goodsId;
         return RestUtil.success("/manage/profitIndex",
                 new BasicNameValuePair("total", pages.getTotalElements()),
                 new BasicNameValuePair("pageSize", pageSize),
