@@ -190,7 +190,7 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
             viewBuyListModel.setPrice(financialBuyFlow.getPrice());
             viewBuyListModel.setAmount(financialBuyFlow.getAmount());
             viewBuyListModel.setNo(financialBuyFlow.getNo());
-            viewBuyListModel.setImageUrl(goods.getImages().get(0).getSmallPic().getValue());
+            if (goods.getImages() != null && goods.getImages().size() > 0) viewBuyListModel.setImageUrl(goods.getImages().get(0).getSmallPic().getValue());
             viewBuyListModel.setMoeny(financialBuyFlow.getMoney());
             Boolean canReddm = false;
             try {
