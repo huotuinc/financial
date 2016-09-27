@@ -121,6 +121,7 @@ public class FinancialProfitServiceImpl implements FinancialProfitService {
         for (Object object : list) {
             FinancialProfit financialProfit = (FinancialProfit) object;
             ViewProfitListModel viewProfitListModel = new ViewProfitListModel();
+            viewProfitListModel.setId(financialProfit.getId());
             viewProfitListModel.setDate(financialProfit.getTime());
             viewProfitListModel.setMoney(financialProfit.getMoney());
             viewProfitListModel.setNo(financialProfit.getNo());
