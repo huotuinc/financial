@@ -91,7 +91,7 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         if (canRedeem(financialBuyFlow)) {
             FinancialBuyFlow findFlow = findRedeem(financialBuyFlow);
             //没有找到可赎回的额度
-            if (findFlow == null) throw new NoFindRedeemAmountException("没找到可回购额度");
+            if (findFlow == null) throw new NoFindRedeemAmountException("没找到可抵用额度");
 
             findFlow.setIsUsed(true);
             financialBuyFlowRepository.save(findFlow);
@@ -164,7 +164,7 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
 
         FinancialBuyFlow findFlow = findRedeem(financialBuyFlow);
         //没有找到可赎回的额度
-        if (findFlow == null) throw new NoFindRedeemAmountException("没找到可回购额度");
+        if (findFlow == null) throw new NoFindRedeemAmountException("没找到可抵用额度");
         //没到回购日期
         Date date = new Date();
         int day = DateHelper.daysBetween(financialBuyFlow.getBuyTime(), date);
