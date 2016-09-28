@@ -41,4 +41,9 @@ public class CommonConfigsServiceImpl implements CommonConfigsService {
     public String getAppSecret() {
         return env.getProperty("appsecrect", "9389e8a5c32eefa3134340640fb4ceaa");
     }
+
+    @Override
+    public String getMallResourceServerUrl() {
+        return env.getProperty("mall.resource.serverUrl", "http://res.51flashmall.com");
+    }
 }

@@ -35,4 +35,10 @@ public interface CommonConfigsService {
      */
     String getAppSecret();
 
+    /**
+     * 商城资源图片地址
+     * @return
+     */
+    String getMallResourceServerUrl();
+
 }

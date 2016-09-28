@@ -27,6 +27,7 @@ import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.repository.FinancialGoodsRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
 import com.huotu.financial.service.CacheService;
+import com.huotu.financial.service.CommonConfigsService;
 import com.huotu.financial.service.FinancialBuyFlowService;
 import com.huotu.huobanplus.common.entity.Goods;
 import com.huotu.huobanplus.common.entity.OrderItems;
@@ -80,6 +81,8 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CommonConfigsService commonConfigsService;
 
     @Override
     public void handleRedeem(FinancialBuyFlow financialBuyFlow) throws NoFindRedeemAmountException, ParseException, NoRedeemStatusException, NoReachRedeemPeriodException {
@@ -190,7 +193,10 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
             viewBuyListModel.setPrice(financialBuyFlow.getPrice());
             viewBuyListModel.setAmount(financialBuyFlow.getAmount());
             viewBuyListModel.setNo(financialBuyFlow.getNo());
-            if (goods.getImages() != null && goods.getImages().size() > 0) viewBuyListModel.setImageUrl(goods.getImages().get(0).getSmallPic().getValue());
+            if (goods.getImages() != null && goods.getImages().size() > 0)
+                viewBuyListModel.setImageUrl(commonConfigsService.getMallResourceServerUrl() + "/" + goods.getImages().get(0).getSmallPic().getValue());
+
+
             viewBuyListModel.setMoeny(financialBuyFlow.getMoney());
             Boolean canReddm = false;
             try {
