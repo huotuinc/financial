@@ -82,4 +82,7 @@ public interface FinancialBuyFlowRepository extends JpaRepository<FinancialBuyFl
      */
     @Query("select count(distinct flow.userId) from FinancialBuyFlow flow where flow.goodId=?1")
     Long countByGoodsId(Long goodsId);
+
+    @Query("select flow from FinancialBuyFlow flow where flow.userId=?1")
+    List<FinancialBuyFlow> findByUser(Long userId);
 }

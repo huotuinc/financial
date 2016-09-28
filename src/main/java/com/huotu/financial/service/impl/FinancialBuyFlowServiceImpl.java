@@ -305,6 +305,10 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
     }
 
     public void save(FinancialGoods financialGoods, OrderItems orderItems, User user, String orderId) {
+        boolean haveBuy = false;
+        List<FinancialBuyFlow> financialBuyFlows = financialBuyFlowRepository.findByUser(user.getId());
+        if (financialBuyFlows != null && financialBuyFlows.size() > 0) haveBuy = true;
+
         Date date = new Date();
         String no = createFinancialNo(date, user.getId());
         FinancialBuyFlow financialBuyFlow = new FinancialBuyFlow();
@@ -313,7 +317,7 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         financialBuyFlow.setPrice(new BigDecimal(orderItems.getPrice()));
         financialBuyFlow.setAmount(orderItems.getAmount());
         financialBuyFlow.setMoney(new BigDecimal(orderItems.getAmount()).multiply(new BigDecimal(orderItems.getPrice())));
-        financialBuyFlow.setBelongOne(user.getBelongOne());
+        if (!haveBuy) financialBuyFlow.setBelongOne(user.getBelongOne());
         financialBuyFlow.setBuyTime(date);
         financialBuyFlow.setCustomerId(user.getMerchant().getId());
         financialBuyFlow.setFinancialTitle(financialGoods.getTitle());
