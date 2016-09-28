@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Administrator on 2016/8/30.
@@ -110,9 +111,12 @@ public class FinancialController {
     public String returnRefund(@RequestParam String no, @RequestParam Long customerId, Model model) {
         FinancialBuyFlow flow = financialBuyFlowRepository.findOne(no);
         MerchantConfig config = merchantConfigRepository.findByMerchantId(flow.getCustomerId());
+        if (Objects.isNull(config))
+            model.addAttribute("defaultReturnAddress", "商家未设置收货地址，可联系商家进行设置");
+        else
+            model.addAttribute("defaultReturnAddress", config.getDefaultReturnAddress());
 //        model
         model.addAttribute("flow", flow);
-        model.addAttribute("defaultReturnAddress", config.getDefaultReturnAddress());
         model.addAttribute("status", flow.getStatus().ordinal());
         model.addAttribute("customerId", customerId);
         return "/financial/returnRefund";
