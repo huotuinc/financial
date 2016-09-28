@@ -114,7 +114,7 @@ public class UserController {
     public ResultModel redeem(@RequestParam(value = "no") String no,
                               @RequestParam String phone,
                               @RequestParam(required = false) String logisticalName,
-                              @RequestParam(required = false) String logisticalCode) {
+                              @RequestParam(required = false) String logisticalCode, Long customerId) {
         ResultModel resultModel = new ResultModel();
 
         FinancialBuyFlow financialBuyFlow = financialBuyFlowRepository.findOne(no);
@@ -129,6 +129,40 @@ public class UserController {
                 if (null != logisticalCode) refund.setLogisticalCode(logisticalCode);
                 financialBuyFlow.setRefund(refund);
                 financialBuyFlowService.handleRedeem(financialBuyFlow);
+            } catch (NoFindRedeemAmountException e) {
+                resultModel.setCode("60001");
+                resultModel.setMessage(e.getMessage());
+                return resultModel;
+            } catch (ParseException e) {
+                resultModel.setCode("60002");
+                resultModel.setMessage(e.getMessage());
+                return resultModel;
+            } catch (NoRedeemStatusException e) {
+                resultModel.setCode("60003");
+                resultModel.setMessage(e.getMessage());
+                return resultModel;
+            } catch (NoReachRedeemPeriodException e) {
+                resultModel.setCode("60004");
+                resultModel.setMessage(e.getMessage());
+                return resultModel;
+            }
+        }
+
+        resultModel.setCode("1");
+        resultModel.setMessage("");
+        return resultModel;
+    }
+
+    @RequestMapping(value = "/checkRedeem", method = RequestMethod.GET)
+    @ResponseBody
+    public ResultModel checkRedeem(@RequestParam(value = "no") String no) {
+        ResultModel resultModel = new ResultModel();
+
+        FinancialBuyFlow financialBuyFlow = financialBuyFlowRepository.findOne(no);
+        if (financialBuyFlow != null) {
+
+            try {
+                financialBuyFlowService.canRedeemNew(financialBuyFlow);
             } catch (NoFindRedeemAmountException e) {
                 resultModel.setCode("60001");
                 resultModel.setMessage(e.getMessage());

@@ -24,6 +24,7 @@
     <link rel="stylesheet" type="text/css" href="../css/weui.min-xian-diy.css">
     <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
     <script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/jquery-weui.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/layer/2.4/layer.js"></script>
     <!--<script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/swiper.min.js"></script>-->
     <!--<script src="http://resali.huobanplus.com/cdn/jquery-weui/0.8.2/city-picker.min.js"></script>-->
 
@@ -113,14 +114,13 @@
         page.redeem = function (status, no, ownerStatus) {
             if (status == 1 || ownerStatus != 0) {
                 requestRedeemData.no = no;
-//                $.post("/user/redeem", requestRedeemData, function (data) {
-//                    if (data.code == "1") {
-//                        alert("回购成功");
-//                        window.location.href = window.location.href;
-//                    }
-//                    else alert(data.message);
-//                });
-                window.location.href = "returnRefund?no=" + no + "&customerId=" + customerId;
+                $.get("/user/checkRedeem", requestRedeemData, function (data) {
+                    if (data.code == "1") {
+                        window.location.href = "returnRefund?no=" + no + "&customerId=" + customerId;
+                    }
+                    else
+                        layer.msg(data.message);
+                });
             }
         };
 
