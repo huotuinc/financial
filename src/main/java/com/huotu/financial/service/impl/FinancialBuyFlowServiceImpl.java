@@ -27,6 +27,7 @@ import com.huotu.financial.repository.FinancialBuyFlowRepository;
 import com.huotu.financial.repository.FinancialGoodsRepository;
 import com.huotu.financial.repository.FinancialProfitRepository;
 import com.huotu.financial.service.CacheService;
+import com.huotu.financial.service.CommonConfigsService;
 import com.huotu.financial.service.FinancialBuyFlowService;
 import com.huotu.huobanplus.common.entity.Goods;
 import com.huotu.huobanplus.common.entity.OrderItems;
@@ -79,6 +80,9 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CommonConfigsService commonConfigsService;
 
 
     @Override
@@ -153,6 +157,21 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
         return true;
     }
 
+    @Override
+    public Boolean canRedeemNew(FinancialBuyFlow financialBuyFlow) throws NoReachRedeemPeriodException,
+            NoRedeemStatusException, ParseException, NoFindRedeemAmountException {
+        if (financialBuyFlow.getStatus() != FinancialStatus.RUNNING) throw new NoRedeemStatusException("不是可回购状态");
+
+        FinancialBuyFlow findFlow = findRedeem(financialBuyFlow);
+        //没有找到可赎回的额度
+        if (findFlow == null) throw new NoFindRedeemAmountException("没找到可回购额度");
+        //没到回购日期
+        Date date = new Date();
+        int day = DateHelper.daysBetween(financialBuyFlow.getBuyTime(), date);
+        if (day < financialBuyFlow.getRedeemPeriod()) throw new NoReachRedeemPeriodException("没到回购日期");
+        return true;
+    }
+
     private FinancialBuyFlow findRedeem(FinancialBuyFlow financialBuyFlow) {
         //获取此用户是否存在回购的额度
         List<FinancialBuyFlow> financialBuyFlows = financialBuyFlowRepository.findAllForRedeem(financialBuyFlow.getUserId(), financialBuyFlow.getBuyTime(), financialBuyFlow.getMoney());
@@ -190,7 +209,7 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
             viewBuyListModel.setPrice(financialBuyFlow.getPrice());
             viewBuyListModel.setAmount(financialBuyFlow.getAmount());
             viewBuyListModel.setNo(financialBuyFlow.getNo());
-            if (goods.getImages() != null && goods.getImages().size() > 0) viewBuyListModel.setImageUrl(goods.getImages().get(0).getSmallPic().getValue());
+            viewBuyListModel.setImageUrl(commonConfigsService.getPicURL() + goods.getImages().get(0).getSmallPic().getValue());
             viewBuyListModel.setMoeny(financialBuyFlow.getMoney());
             Boolean canReddm = false;
             try {

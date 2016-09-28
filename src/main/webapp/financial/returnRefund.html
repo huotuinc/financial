@@ -119,10 +119,10 @@
         requestRedeemData.customerId = $("#customerId").val();
         $.post("../user/redeem", requestRedeemData, function (data) {
             if (data.code == "1") {
-                alert("回购成功");
-                window.location.href = '../financial/index';
+                layer.msg("回购成功");
+                window.location.href = '../financial/index?customerId=' + $("#customerId").val();
             }
-            else alert(data.message);
+            else layer.msg(data.message);
         });
 
     }

@@ -54,6 +54,18 @@ public interface FinancialBuyFlowService {
     Boolean canRedeem(FinancialBuyFlow financialBuyFlow) throws NoReachRedeemPeriodException, NoRedeemStatusException, ParseException;
 
     /**
+     * 判断是否可以赎回
+     *
+     * @param financialBuyFlow
+     * @return
+     * @throws NoReachRedeemPeriodException
+     * @throws NoRedeemStatusException
+     * @throws ParseException
+     */
+    Boolean canRedeemNew(FinancialBuyFlow financialBuyFlow) throws NoReachRedeemPeriodException,
+            NoRedeemStatusException, ParseException, NoFindRedeemAmountException;
+
+    /**
      * 获得购买流水
      *
      * @param userId
