@@ -126,6 +126,10 @@ public class FinancialBuyFlowServiceImpl implements FinancialBuyFlowService {
             model.setPhone(refund.getPhone());
             model.setLogisticalName(refund.getLogisticalName());
             model.setLogisticalCode(refund.getLogisticalCode());
+            if (null != refund.getApplyDate())
+                model.setApplyDate(refund.getApplyDate());
+            if (null != refund.getRedemptionDate())
+                model.setRedemptionDate(refund.getRedemptionDate());
         }
         return model;
     }

@@ -117,10 +117,12 @@
                 $.get("/user/checkRedeem", requestRedeemData, function (data) {
                     if (data.code == "1") {
                         window.location.href = "returnRefund?no=" + no + "&customerId=" + customerId;
-                    }
-                    else
+                    } else if (data.code == "60003") {
+                        window.location.href = "returnRefund?no=" + no + "&customerId=" + customerId;
+                    } else
                         layer.msg(data.message);
                 });
+//                window.location.href = "returnRefund?no=" + no + "&customerId=" + customerId;
             }
         };
 

@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -127,6 +128,7 @@ public class UserController {
                 refund.setPhone(phone);
                 if (null != logisticalName) refund.setLogisticalName(logisticalName);
                 if (null != logisticalCode) refund.setLogisticalCode(logisticalCode);
+                refund.setApplyDate(new Date());
                 financialBuyFlow.setRefund(refund);
                 financialBuyFlowService.handleRedeem(financialBuyFlow);
             } catch (NoFindRedeemAmountException e) {

@@ -39,9 +39,9 @@
                             </div>
                             <button type="button" id="flowSearch" class="btn btn-success">搜索</button>
                             <p style="float: right;">
-                                <a th:href="@{/financialGoods/redemptionList}" href="javascript:void(0);"
+                                <a th:href="@{/financialGoods/redeemList}" href="javascript:void(0);"
                                    class="btn btn-success btn-sm">
-                                    查看赎回记录
+                                    返回
                                 </a>
 
                             </p>
@@ -75,8 +75,7 @@
                                     <td>手机号</td>
                                     <td>物流公司</td>
                                     <td>快递单号</td>
-                                    <td>提交时间</td>
-                                    <td>操作</td>
+                                    <td>赎回时间</td>
                                 </tr>
                                 </thead>
                                 <tbody id="list">
@@ -85,20 +84,18 @@
                                     <td th:text="${flow.financialTitle}">商品1</td>
                                     <td th:text="${flow.amount}">1</td>
                                     <td th:text="${flow.money}">10000</td>
+                                    <!--<td th:text="${#calendars.format(flow.buyTime,'yyyy-MM-dd HH:mm')}">2014-05-31-->
+                                    <!--13:57-->
+                                    <!--</td>-->
+                                    <!--<td th:text="${flow.rate}">0.0001</td>-->
+                                    <!--<td th:text="${flow.redeemPeriod}">100</td>-->
                                     <td th:text="${flow.wxName}">test</td>
                                     <td th:text="${flow.loginName}"></td>
                                     <td th:text="${flow.phone}"></td>
                                     <td th:text="${flow.logisticalName}"></td>
                                     <td th:text="${flow.logisticalCode}"></td>
-                                    <td th:text="${#calendars.format(flow.applyDate,'yyyy-MM-dd HH:mm:ss')}">
+                                    <td th:text="${#calendars.format(flow.redemptionDate,'yyyy-MM-dd HH:mm:ss')}">
                                         2014-05-31 13:57
-                                    </td>
-                                    <td>
-                                        <button style="padding: 0px 5px;" title="" data-placement="top"
-                                                onclick="redemption(this)" th:attr="flowNo=${flow.no}"
-                                                data-toggle="tooltip" class="btn btn-success btn-sm" type="button"
-                                                data-original-title="确定赎回">确定赎回
-                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -168,46 +165,6 @@
         });
 
     }
-
-    //    var page = {};
-    //
-    //    page.init = function () {
-    //        page.list();
-    //    }
-    //
-    //    page.search = function () {
-    //        requestData.no = $("#no").val();
-    //        page.list();
-    //    }
-
-    //    page.list = function () {
-    //        $.get("/financialGoods/redeemlist.do", requestData, function (data) {
-    //            if (data) {
-    //                var html = "";
-    //                for (var i = 0; i < data.list.length; i++) {
-    //                    var row = data.list[i];
-    //                    html += '<tr><td>' + row.no + '</td><td>' + row.userName + '</td><td>' + row.financialTitle + '</td><td>' + row.time + '</td>' +
-    //                            '<td><button style="padding: 0px 5px;" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="确定赎回">确定赎回</button></td></tr>';
-    //                }
-    //
-    //                $("#list").html(html);
-    //
-    //                $("#recordCount").text(data.page.recordCount);
-    //                $("#pageIndex").text(data.page.pageNo);
-    //                $("#pageCount").text(data.page.totalPage);
-    //                $("#pageSize").text(data.page.pageSize);
-    //                page.paging(data.page.totalPage);
-    //            }
-    //        });
-    //    }
-
-    //    page.paging = function (totalPage) {
-    //        var pageinate = new hot.paging(".pagination", requestData.pageNo, totalPage, 7);
-    //        pageinate.init(function (pageNo) {
-    //            requestData.pageNo = pageNo;
-    //            page.list();
-    //        });
-    //    }
 
 </script>
 </body>

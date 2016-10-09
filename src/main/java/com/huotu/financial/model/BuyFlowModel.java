@@ -109,4 +109,8 @@ public class BuyFlowModel {
     private String logisticalName;
 
     private String logisticalCode;
+
+    private Date applyDate;
+
+    private Date redemptionDate;
 }

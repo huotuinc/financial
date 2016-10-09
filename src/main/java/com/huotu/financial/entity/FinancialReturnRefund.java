@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by Administrator on 2016/9/22.
@@ -38,6 +39,18 @@ public class FinancialReturnRefund {
 
     //赎回原因
     private String reason;
+
+    /**
+     * 同意赎回时间
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date redemptionDate;
+
+    /**
+     * 申请时间
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date applyDate;
 
     //物流公司名字
     private String logisticalName;

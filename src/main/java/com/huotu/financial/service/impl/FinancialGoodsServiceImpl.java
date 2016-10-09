@@ -10,8 +10,10 @@
 package com.huotu.financial.service.impl;
 
 import com.huotu.financial.entity.FinancialBuyFlow;
+import com.huotu.financial.entity.FinancialReturnRefund;
 import com.huotu.financial.enums.FinancialStatus;
 import com.huotu.financial.repository.FinancialBuyFlowRepository;
+import com.huotu.financial.repository.FinancialReturnRefundRepository;
 import com.huotu.financial.service.FinancialGoodsService;
 import com.huotu.huobanplus.common.entity.MallAdvanceLogs;
 import com.huotu.huobanplus.common.entity.User;
@@ -38,19 +40,24 @@ public class FinancialGoodsServiceImpl implements FinancialGoodsService {
     private UserRepository userRepository;
     @Autowired
     private MallAdvanceLogsRepository mallAdvanceLogsRepository;
+    @Autowired
+    private FinancialReturnRefundRepository financialReturnRefundRepository;
 
     @Transactional
     @Override
     public synchronized ModelMap updateFlowStatus(String no) throws IOException {
         FinancialBuyFlow flow = financialBuyFlowRepository.getOne(no);
         ModelMap map = new ModelMap();
-//        if (!flow.getStatus().equals(FinancialStatus.DOING)) {
-//            map.addAttribute("success", false);
-//            map.addAttribute("msg", "赎回失败，请核对信息后再进行操作");
-//            return map;
-//        }
+        if (!flow.getStatus().equals(FinancialStatus.DOING)) {
+            map.addAttribute("success", false);
+            map.addAttribute("msg", "不是可赎回状态");
+            return map;
+        }
 
         flow.setStatus(FinancialStatus.REDEEMED);
+        FinancialReturnRefund refund = flow.getRefund();
+        refund.setRedemptionDate(new Date());
+        financialReturnRefundRepository.save(refund);
         financialBuyFlowRepository.save(flow);
 
         User user = userRepository.getOne(flow.getUserId());

@@ -389,6 +389,33 @@ public class FinancialGoodsController {
                 new BasicNameValuePair("list", list));
     }
 
+    @RequestMapping(value = "/redemptionList", method = RequestMethod.GET)
+    public ModelAndView redemptionList(@CustomerId Long customerId,
+                                       @RequestParam(required = false) String no,
+                                       @RequestParam(required = false) Integer page,
+                                       @RequestParam(required = false) Integer pageSize) throws IOException, UserException {
+        Sort sort = new Sort(Sort.Direction.DESC, "buyTime");
+        if (Objects.isNull(page)) page = list_page;
+        if (Objects.isNull(pageSize)) pageSize = list_pageSize;
+        Pageable pageable = new PageRequest(page - 1, pageSize, sort);
+        Page<FinancialBuyFlow> pages = financialBuyFlowService.findAllByCustomerIdAndNoAndStatus(customerId, no,
+                FinancialStatus.REDEEMED, pageable);
+        List<BuyFlowModel> list = financialBuyFlowService.changeDomainToModelList(pages.getContent());
+        Long count = pages.getTotalElements();
+        int pageCount = Integer.parseInt(count.toString()) / pageSize + 1;
+        String url = commonConfigsService.getWebUrl() +
+                "/financialGoods/redemptionList";
+        String rootURL = no == null ? url + "?page=" : url + "?no=" + no + "&&page=";
+        return RestUtil.success("manage/redemptionList", new BasicNameValuePair("customerId", customerId),
+                new BasicNameValuePair("total", pages.getTotalElements()),
+                new BasicNameValuePair("pageSize", pageSize),
+                new BasicNameValuePair("page", page),
+                new BasicNameValuePair("pageCount", pageCount),
+                new BasicNameValuePair("url", rootURL),
+                new BasicNameValuePair("searchUrl", url + "?no="),
+                new BasicNameValuePair("list", list));
+    }
+
 //    @RequestMapping(value = "/redeemlist.do")
 //    @ResponseBody
 //    public ViewRedeemListPageModel redeemListDo(@RequestParam(required = false) Integer page,
