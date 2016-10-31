@@ -24,7 +24,7 @@ import com.huotu.financial.service.FinancialBuyFlowService;
 import com.huotu.financial.service.FinancialGoodsService;
 import com.huotu.financial.util.RestUtil;
 import com.huotu.financial.util.support.BasicNameValuePair;
-import com.huotu.huobanplus.common.dataService.GoodsService;
+import com.huotu.huobanplus.common.dataService.NewGoodsService;
 import com.huotu.huobanplus.common.entity.Goods;
 import com.huotu.huobanplus.common.repository.UserRepository;
 import com.huotu.huobanplus.sdk.mall.annotation.CustomerId;
@@ -70,7 +70,7 @@ public class FinancialGoodsController {
     @Autowired
     private FinancialBuyFlowService financialBuyFlowService;
     @Autowired
-    private GoodsService goodsService;
+    private NewGoodsService goodsService;
     @Autowired
     private FinancialBuyFlowRepository financialBuyFlowRepository;
     @Autowired
