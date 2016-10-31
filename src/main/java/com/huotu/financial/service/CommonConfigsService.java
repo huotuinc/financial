@@ -50,4 +50,16 @@ public interface CommonConfigsService {
      */
     String getMallResourceServerUrl();
 
+    /**
+     * app使用密钥
+     * @return
+     */
+    String getAppUseSecret();
+
+    /**
+     * 主域名
+     * @return
+     */
+    String getMainDomain();
+
 }

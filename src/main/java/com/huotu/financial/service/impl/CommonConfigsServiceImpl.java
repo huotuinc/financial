@@ -46,4 +46,17 @@ public class CommonConfigsServiceImpl implements CommonConfigsService {
     public String getMallResourceServerUrl() {
         return env.getProperty("mall.resource.serverUrl", "http://res.51flashmall.com");
     }
+
+
+
+    @Override
+    public String getAppUseSecret() {
+        return env.getProperty("appusesecret", "08afd6f9ae0c6017d105b4ce580de885");
+    }
+
+    @Override
+    public String getMainDomain() {
+        return env.getProperty("maindomain", "51flashmall.com");
+    }
+
 }
