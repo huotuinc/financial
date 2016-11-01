@@ -161,6 +161,8 @@ public class WebInterceptor implements HandlerInterceptor {
         }
         if (!StringUtils.isEmpty(request.getParameter("customerId")))
             appPublicModel.setCustomerId(Long.parseLong(request.getParameter("customerId")));
+        else
+            appPublicModel.setCustomerId(Long.parseLong(request.getParameter("customerid")));
 
         boolean checkPass = false;
         if (checkAppSign(appPublicModel)) {
