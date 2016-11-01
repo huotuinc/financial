@@ -40,6 +40,8 @@ public class FinancialGoodsControllerTest extends WebTest {
     private FinancialGoodsRepository financialGoodsRepository;
 
     private Random random = new Random();
+    @Autowired
+    private UserService userService;
 
     @Test
     @Rollback
@@ -86,7 +88,6 @@ public class FinancialGoodsControllerTest extends WebTest {
         assertEquals("", newStatus, "false");
     }
 
-
     @Test
     @Rollback
     public void buyFlowIndex() throws Exception {
@@ -112,8 +113,6 @@ public class FinancialGoodsControllerTest extends WebTest {
         assertEquals("", Long.parseLong(String.valueOf(newMap.get("total"))), list.size());
     }
 
-    @Autowired
-    private UserService userService;
     @Test
     public  void  t() throws Exception {
 //        String x = userService.testEncrypt();
@@ -123,5 +122,8 @@ public class FinancialGoodsControllerTest extends WebTest {
 //
 //        System.out.println(userService.testD(x));
 //        System.out.println(userService.testD(y));
+
+        String s = "aa9c68328faece5fd8285ef55b281cbd:16892:A4E225904B7F951207307A181F09FC7EE5665DC7849A023914C20B2F09E2330A:";
+        System.out.println(s.split(":", -1).length);
     }
 }

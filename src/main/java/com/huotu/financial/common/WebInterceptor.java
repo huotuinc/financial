@@ -1,3 +1,12 @@
+/*
+ * 版权所有:杭州火图科技有限公司
+ * 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼
+ *
+ * (c) Copyright Hangzhou Hot Technology Co., Ltd.
+ * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+ * 2013-2016. All rights reserved.
+ */
+
 package com.huotu.financial.common;
 
 import com.huotu.financial.model.AppPublicModel;
@@ -72,8 +81,7 @@ public class WebInterceptor implements HandlerInterceptor {
                 throw new Exception("not support ,please use weixin or app");
         }
 
-        if (!gotoStatus) return false;
-        return true;
+        return gotoStatus;
     }
 
     @Override
@@ -198,21 +206,13 @@ public class WebInterceptor implements HandlerInterceptor {
         return SystemEnvironment.UNKNOW;
     }
 
-
-    private enum SystemEnvironment {
-        WEIXIN,
-        APP,
-        UNKNOW
-    }
-
-
     /**
      * 返回app信息
      *
      * @param userAgent 字符串
      * @return
      */
-    public static String[] getAppHeaderInfo(String userAgent) {
+    public String[] getAppHeaderInfo(String userAgent) {
         if (StringUtils.isEmpty(userAgent)) {
             return null;
         }
@@ -222,9 +222,8 @@ public class WebInterceptor implements HandlerInterceptor {
         while (matcher.find()) {
             builder.append(matcher.group(1));
         }
-        return builder.toString().split(":");
+        return builder.toString().split(":", -1);
     }
-
 
     /**
      * 判断签名是否正确
@@ -250,5 +249,11 @@ public class WebInterceptor implements HandlerInterceptor {
             subDomain = "";
         }
         return "http://" + subDomain + "." + commonConfigsService.getMainDomain();
+    }
+
+    private enum SystemEnvironment {
+        WEIXIN,
+        APP,
+        UNKNOW
     }
 }
