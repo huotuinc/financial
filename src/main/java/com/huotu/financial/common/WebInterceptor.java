@@ -234,6 +234,7 @@ public class WebInterceptor implements HandlerInterceptor {
      */
     public boolean checkAppSign(AppPublicModel webPublicModel) throws UnsupportedEncodingException {
         String s = webPublicModel.getMallUserId() + webPublicModel.getUnionId() + webPublicModel.getOpenId() + commonConfigsService.getAppUseSecret();
+        log.info(s);
         String sign = DigestUtils.md5DigestAsHex(s.getBytes("UTF-8")).toLowerCase();
         return sign.equals(webPublicModel.getSign());
     }
