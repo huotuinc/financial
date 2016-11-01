@@ -153,7 +153,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
         AppPublicModel appPublicModel = new AppPublicModel();
         String[] data = getAppHeaderInfo(request.getHeader("User-Agent"));
-        if (data != null && data.length == 4) {
+        if (data != null && data.length >= 4) {
             appPublicModel.setMallUserId(Long.parseLong(data[1]));
             appPublicModel.setUnionId(data[2]);
             appPublicModel.setOpenId(data[3]);
